@@ -327,6 +327,6 @@ public class TankDrive implements Wheels {
         if (Math.abs(power) < JOYSTICK_DEADZONE) {
             power = 0.0f;
         }
-        return power;
+        return (float) Math.pow(power, 3);
     }
 }
