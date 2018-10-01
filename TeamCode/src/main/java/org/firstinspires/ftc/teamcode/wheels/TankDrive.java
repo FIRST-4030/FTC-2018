@@ -15,6 +15,7 @@ public class TankDrive implements Wheels {
     private static final boolean DEBUG = false;
     private static final float JOYSTICK_DEADZONE = 0.1f;
     private static final float SPEED_DEADZONE = JOYSTICK_DEADZONE * 0.85f;
+    private static final int JOYSTICK_EXPONENT = 3;
 
     protected WheelsConfig config = null;
     protected final Telemetry telemetry;
@@ -322,11 +323,14 @@ public class TankDrive implements Wheels {
         return com.qualcomm.robotcore.util.Range.clip(input, -1.0f, 1.0f);
     }
 
-    protected float cleanJoystick(float power) {
-        power = limit(power);
-        if (Math.abs(power) < JOYSTICK_DEADZONE) {
-            power = 0.0f;
+    protected float cleanJoystick(float stick) {
+        if (Math.abs(stick) < JOYSTICK_DEADZONE) {
+            return 0.0f;
         }
-        return (float) Math.pow(power, 3);
+
+        float power = limit(stick);
+        power = (float)Math.pow(power, JOYSTICK_EXPONENT);
+        power = Math.copySign(power, stick);
+        return power;
     }
 }
