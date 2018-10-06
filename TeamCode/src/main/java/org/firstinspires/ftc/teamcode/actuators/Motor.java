@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.utils.Available;
 
 public class Motor implements Available {
     public static final DcMotor.RunMode DEFAULT_MODE = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-    public static final DcMotor.ZeroPowerBehavior DEFAULT_ZERO_POWER = DcMotor.ZeroPowerBehavior.FLOAT;
-    public static final DcMotor.Direction DEFAULT_DIRECTION = DcMotor.Direction.FORWARD;
 
     private DcMotor motor = null;
     private boolean enabled = true;
@@ -26,16 +24,8 @@ public class Motor implements Available {
         }
         try {
             motor = map.dcMotor.get(config.name);
-            if (config.reverse) {
-                motor.setDirection(DcMotor.Direction.REVERSE);
-            } else {
-                motor.setDirection(DEFAULT_DIRECTION);
-            }
-            if (config.brake) {
-                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            } else {
-                motor.setZeroPowerBehavior(DEFAULT_ZERO_POWER);
-            }
+            setReverse(config.reverse);
+            setBrake(config.brake);
             setMode(config.mode);
         } catch (Exception e) {
             telemetry.log().add(this.getClass().getSimpleName() + " No such device: " + config.name);
@@ -83,6 +73,9 @@ public class Motor implements Available {
         if (!isAvailable()) {
             return;
         }
+        if (mode == null) {
+            mode = DEFAULT_MODE;
+        }
         motor.setMode(mode);
     }
 
@@ -94,5 +87,41 @@ public class Motor implements Available {
             mode = DEFAULT_MODE;
         }
         return mode;
+    }
+
+    public void setBrake(boolean brake) {
+        if (!isAvailable()) {
+            return;
+        }
+        DcMotor.ZeroPowerBehavior behavior = DcMotor.ZeroPowerBehavior.FLOAT;
+        if (brake) {
+            behavior = DcMotor.ZeroPowerBehavior.BRAKE;
+        }
+        motor.setZeroPowerBehavior(behavior);
+    }
+
+    public boolean getBrake() {
+        if (!isAvailable()) {
+            return false;
+        }
+        return (motor.getZeroPowerBehavior() == DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void setReverse(boolean brake) {
+        if (!isAvailable()) {
+            return;
+        }
+        DcMotor.Direction direction = DcMotor.Direction.FORWARD;
+        if (brake) {
+            direction = DcMotor.Direction.REVERSE;
+        }
+        motor.setDirection(direction);
+    }
+
+    public boolean getReverse() {
+        if (!isAvailable()) {
+            return false;
+        }
+        return (motor.getDirection() == DcMotor.Direction.REVERSE);
     }
 }

@@ -4,15 +4,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.config.Config;
 
+import java.security.InvalidParameterException;
+
 public class MotorConfig implements Config {
     public final String name;
     public final boolean reverse;
-    public boolean brake;
-    public DcMotor.RunMode mode;
+    public final boolean brake;
+    public final DcMotor.RunMode mode;
 
     public MotorConfig(String name, boolean reverse, boolean brake, DcMotor.RunMode mode) {
-        if (mode == null) {
-            mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+        if (name == null) {
+            throw new InvalidParameterException(this.getClass().getSimpleName() + ": Null name");
         }
 
         this.name = name;

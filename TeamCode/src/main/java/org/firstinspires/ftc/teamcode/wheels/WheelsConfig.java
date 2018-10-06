@@ -31,8 +31,8 @@ public class WheelsConfig implements Config {
         this.motors = motors;
 
         for (WheelMotor motor : motors) {
-            motor.brake = brake;
-            motor.mode = mode;
+            motor.motor.setMode(mode);
+            motor.motor.setBrake(brake);
         }
     }
 
