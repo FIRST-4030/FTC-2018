@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.field;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
 
 /*
@@ -10,14 +11,14 @@ import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
  * FYI: For some games the ftc_app SDK provides a default location for the Vuforia targets
  */
 public class VuforiaConfigs {
-    public static final String AssetName = "RelicVuMark";
-    public static final String[] TargetNames = {"VuMark"};
+    public static final String AssetName = "RoverRuckus";
+    public static final String[] TargetNames = {"Space", "Dirt", "Rover", "Footprint"};
     public static final int TargetCount = TargetNames.length;
 
-    static public VuforiaTarget Bot() {
+    static public VuforiaTarget Bot(BOT bot) {
         // TODO: This location and rotation is imaginary, but should at least be close.
         return new VuforiaTarget(
-                "Phone", null,
+                "Phone",
                 new float[]{(18 * Field.MM_PER_INCH) / 2, 0, 0},
                 new float[]{-90, 0, 0},
                 AxesOrder.YZY
@@ -26,16 +27,28 @@ public class VuforiaConfigs {
 
     static public VuforiaTarget[] Field() {
         // TODO: These targets, locations and rotations are imaginary.
-        float[] ROTATION_BLUE = {90, 270, 0};
-        float[] ADJUST_BLUE = {-300, 0, 0};
+        float[] ADJUST = {0, 0, 0};
 
-        int X_BLUE = Field.FIELD_WIDTH / 2;
-        int OFFSET_NEAR = (int) (12 * Field.MM_PER_INCH);
-
-        return new VuforiaTarget[]{new VuforiaTarget(
-                "VuMark", Field.AllianceColor.BLUE,
-                new float[]{X_BLUE, -OFFSET_NEAR, 0},
-                ADJUST_BLUE, ROTATION_BLUE
-        )};
+        return new VuforiaTarget[]{
+                new VuforiaTarget(
+                        TargetNames[0],
+                        new float[]{0, Field.FIELD_WIDTH / 2, 0},
+                        ADJUST, new float[]{90, 0, 0}
+                ),
+                new VuforiaTarget(
+                        TargetNames[1],
+                        new float[]{Field.FIELD_WIDTH / 2, 0, 0},
+                        ADJUST, new float[]{90, 90, 0}
+                ),
+                new VuforiaTarget(
+                        TargetNames[2],
+                        new float[]{0, -Field.FIELD_WIDTH / 2, 0},
+                        ADJUST, new float[]{90, 180, 0}
+                ),
+                new VuforiaTarget(
+                        TargetNames[3],
+                        new float[]{-Field.FIELD_WIDTH / 2, 0, 0},
+                        ADJUST, new float[]{90, 270, 0}
+                )};
     }
 }

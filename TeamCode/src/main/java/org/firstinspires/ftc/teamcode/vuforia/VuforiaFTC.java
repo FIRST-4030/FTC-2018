@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.vuforia;
 
 import com.qualcomm.ftcrobotcontroller.R;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.HINT;
 import com.vuforia.Image;
@@ -50,8 +51,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.config.BOT;
+import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +74,6 @@ public class VuforiaFTC {
     private static final String VUFORIA_KEY = "AbgpAh3/////AAAAGTwS0imaZU6wjVVHhw7cr1iHxcyPegw1+zPNzs+oNjtZlwpyvuwb2hdTLeEEj0gPTWUgVfLbnn6BrV6pafSnN8oCEEZrbVicTGw02BT+V0IzD43++kcsLVuumaM9yAUlAaDPiuEvEx6AZxYnM05KMzlAtMtfgW8tOIvjlicxep9tPhr1Z1Z3JrDt8s8mPo3GsSRSvpoSXZfxRLi0CwGEJlTuVrP59wLhsvr3CZ5Nr7gCNznhAaiGp4LhtCPoXsIUjsQHwO2hmskW670gZGIZl7BvqVbN5mIwqOYF3ZsCUkR83pM7jSIsOMdiaLK5ZlVLG+z5AfgoPNDZo8iYiqTncIiSUL5oJuh2NIeiG+nwcPJV";
 
     // Short names for external constants
-    private static final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.BACK;
     private static final AxesReference AXES_REFERENCE = AxesReference.EXTRINSIC;
     private static final AngleUnit ANGLE_UNIT = AngleUnit.DEGREES;
 
@@ -82,12 +86,11 @@ public class VuforiaFTC {
     private static final int CAPTURE_POLL_TIMEOUT = 100;
 
     // Tracking config
-    private final String CONFIG_ASSET;
-    private final int CONFIG_TARGETS_NUM;
     private final VuforiaTarget[] CONFIG_TARGETS;
     private final VuforiaTarget CONFIG_PHONE;
 
     // Dynamic things we need to remember
+    private VuforiaLocalizer.Parameters parameters;
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
     private VuforiaTrackables targetsRaw;
@@ -102,11 +105,41 @@ public class VuforiaFTC {
     private final HashMap<String, Integer> targetIndex = new HashMap<>();
     private ImageFTC image = null;
 
-    public VuforiaFTC(String targetAsset, int numTargets, VuforiaTarget[] targetConfig, VuforiaTarget phoneConfig) {
-        CONFIG_TARGETS = targetConfig;
-        CONFIG_PHONE = phoneConfig;
-        CONFIG_ASSET = targetAsset;
-        CONFIG_TARGETS_NUM = numTargets;
+    private VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot, String name, VuforiaLocalizer.CameraDirection direction) {
+        CONFIG_TARGETS = VuforiaConfigs.Field();
+        CONFIG_PHONE = VuforiaConfigs.Bot(bot);
+
+        parameters = new VuforiaLocalizer.Parameters();
+        if (DEBUG) {
+            parameters.cameraMonitorViewIdParent = R.id.cameraMonitorViewId;
+        }
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+
+        if (map != null && name != null) {
+            try {
+                WebcamName webcam = map.get(WebcamName.class, name);
+                parameters.cameraName = webcam;
+            } catch (Exception e) {
+                telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
+                return;
+            }
+        } else if (direction != null) {
+            parameters.cameraDirection = direction;
+        } else {
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        }
+    }
+
+    public VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot, String name) {
+        this(map, telemetry, bot, name, null);
+    }
+
+    public VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot, VuforiaLocalizer.CameraDirection direction) {
+        this(map, telemetry, bot, null, direction);
+    }
+
+    public VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot) {
+        this(map, telemetry, bot, null, null);
     }
 
     public void start() {
@@ -115,26 +148,18 @@ public class VuforiaFTC {
         }
 
         // Init Vuforia
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        if (DEBUG) {
-            parameters.cameraMonitorViewIdParent = R.id.cameraMonitorViewId;
-        }
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CAMERA_DIRECTION;
-        //webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        //parameters.cameraName = webcamName;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         /*
          * Pre-processed target images from the Vuforia target manager:
          * https://developer.vuforia.com/target-manager.
          */
-        targetsRaw = vuforia.loadTrackablesFromAsset(CONFIG_ASSET);
-        com.vuforia.Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, CONFIG_TARGETS_NUM);
+        targetsRaw = vuforia.loadTrackablesFromAsset(VuforiaConfigs.AssetName);
+        com.vuforia.Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, VuforiaConfigs.TargetCount);
         targets.addAll(targetsRaw);
 
         // Configure target names, locations, rotations and hashmaps
-        for (int i = 0; i < CONFIG_TARGETS_NUM; i++) {
+        for (int i = 0; i < VuforiaConfigs.TargetCount; i++) {
             initTrackable(targetsRaw, i);
         }
 

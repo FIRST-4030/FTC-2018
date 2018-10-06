@@ -89,8 +89,7 @@ public class Robot {
 
         gyro = gyros.init();
 
-        vuforia = new VuforiaFTC(VuforiaConfigs.AssetName, VuforiaConfigs.TargetCount,
-                VuforiaConfigs.Field(), VuforiaConfigs.Bot());
+        vuforia = new VuforiaFTC(map, telemetry, bot);
 
         this.common = new Common(this);
     }

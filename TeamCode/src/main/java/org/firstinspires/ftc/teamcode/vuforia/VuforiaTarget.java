@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode.vuforia;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.field.Field;
 
 public class VuforiaTarget {
     private static final int NUM_DIMENSIONS = 3;
 
     public final String name;
-    public final Field.AllianceColor color;
     public final float[] raw;
     public final float[] rotation;
     public final AxesOrder axesOrder;
     public final int[] adjusted;
 
-    private VuforiaTarget(String name, Field.AllianceColor color, float[] location, float[] offset, float[] rotation, AxesOrder axesOrder) {
+    private VuforiaTarget(String name, float[] location, float[] offset, float[] rotation, AxesOrder axesOrder) {
         this.name = name;
-        this.color = color;
         this.raw = location;
         float[] offset1;
         if (offset != null) {
@@ -36,11 +33,11 @@ public class VuforiaTarget {
         }
     }
 
-    public VuforiaTarget(String name, Field.AllianceColor color, float[] location, float[] offset, float[] rotation) {
-        this(name, color, location, offset, rotation, null);
+    public VuforiaTarget(String name, float[] location, float[] offset, float[] rotation) {
+        this(name, location, offset, rotation, null);
     }
 
-    public VuforiaTarget(String name, Field.AllianceColor color, float[] location, float[] rotation, AxesOrder axesOrder) {
-        this(name, color, location, null, rotation, axesOrder);
+    public VuforiaTarget(String name, float[] location, float[] rotation, AxesOrder axesOrder) {
+        this(name, location, null, rotation, axesOrder);
     }
 }
