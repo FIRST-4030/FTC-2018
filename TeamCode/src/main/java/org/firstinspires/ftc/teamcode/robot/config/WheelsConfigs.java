@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.config;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -62,14 +63,14 @@ public class WheelsConfigs extends Configs {
             case Mecanum:
                 motors = new WheelMotor[4];
                 motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false,
-                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE, true);
+                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE);
                 motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, false,
-                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE, true);
+                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE);
                 motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true,
-                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE, true);
+                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE);
                 motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true,
-                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE, true);
-                config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors);
+                        new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE);
+                config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, true, DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
             case WestCoastClaw:
                 motors = new WheelMotor[4];

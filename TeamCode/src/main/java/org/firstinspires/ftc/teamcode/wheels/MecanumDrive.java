@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.wheels;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,9 +9,6 @@ public class MecanumDrive extends TankDrive {
 
     public MecanumDrive(HardwareMap map, Telemetry telemetry, WheelsConfig config) {
         super(map, telemetry, config);
-        for (int i = 0; i < config.motors.length; i++) {
-            this.setMode(i, DcMotor.RunMode.RUN_USING_ENCODER);
-        }
     }
 
     public void setSpeed(float speed, MOTOR_SIDE side, MOTOR_END end) {

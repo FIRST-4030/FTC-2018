@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.wheels;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.actuators.MotorConfig;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
@@ -15,8 +17,8 @@ public class WheelMotor extends MotorConfig implements Available {
     public final float maxRate;
 
     public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse,
-                      PIDParams pid, float ticksPerMM, float maxRate, boolean brake) {
-        super(name, reverse, brake);
+                      PIDParams pid, float ticksPerMM, float maxRate, boolean brake, DcMotor.RunMode mode) {
+        super(name, reverse, brake, mode);
         this.side = side;
         this.end = end;
         this.motor = null;
@@ -27,16 +29,17 @@ public class WheelMotor extends MotorConfig implements Available {
     }
 
     public WheelMotor(String name, MOTOR_SIDE side, boolean reverse) {
-        this(name, side, MOTOR_END.FRONT, reverse, null, 1.0f, 1.0f, true);
+        this(name, side, MOTOR_END.FRONT, reverse, null, 1.0f, 1.0f, true, null);
     }
 
-    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse) {
-        this(name, side, end, reverse, null, 1.0f, 1.0f, true);
+    public WheelMotor(String name, MOTOR_SIDE side, MOTOR_END end, boolean reverse,
+                      PIDParams pid, float ticksPerMM, float maxRate) {
+        this(name, side, end, reverse, pid, ticksPerMM, maxRate, true, null);
     }
 
     public WheelMotor(String name, MOTOR_SIDE side, boolean reverse,
                       PIDParams pid, float ticksPerMM, float maxRate) {
-        this(name, side, MOTOR_END.FRONT, reverse, pid, ticksPerMM, maxRate, true);
+        this(name, side, MOTOR_END.FRONT, reverse, pid, ticksPerMM, maxRate, true, null);
     }
 
     public boolean isAvailable() {

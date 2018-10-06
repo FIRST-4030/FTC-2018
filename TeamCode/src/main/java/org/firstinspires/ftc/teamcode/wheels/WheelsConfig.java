@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.wheels;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.teamcode.config.Config;
 
 public class WheelsConfig implements Config {
     public WheelMotor[] motors;
     public DRIVE_TYPE type;
-    public final boolean brake;
 
-    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors, boolean brake) {
+    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors, boolean brake, DcMotor.RunMode mode) {
         if (motors == null) {
             throw new IllegalArgumentException(this.getClass().getSimpleName() + ": No motors provided");
         }
@@ -28,11 +29,14 @@ public class WheelsConfig implements Config {
 
         this.type = type;
         this.motors = motors;
-        this.brake = brake;
+
+        for (WheelMotor motor : motors) {
+            motor.brake = brake;
+            motor.mode = mode;
+        }
     }
 
-    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors) {
-        this(type, motors, false);
+    public WheelsConfig(DRIVE_TYPE type, WheelMotor[] motors, boolean brake) {
+        this(type, motors, brake, null);
     }
-
 }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.actuators;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -37,6 +36,7 @@ public class Motor implements Available {
             } else {
                 motor.setZeroPowerBehavior(DEFAULT_ZERO_POWER);
             }
+            setMode(config.mode);
         } catch (Exception e) {
             telemetry.log().add(this.getClass().getSimpleName() + " No such device: " + config.name);
             motor = null;
