@@ -20,7 +20,7 @@ public class ImageFTC {
     public static final int SAVE_QUALITY_DEFAULT = 100;
 
     private Bitmap bitmap;
-    private long timestamp = 0;
+    private long timestamp;
 
     public ImageFTC(Image img, int vuforiaFormat) {
         Bitmap.Config format;

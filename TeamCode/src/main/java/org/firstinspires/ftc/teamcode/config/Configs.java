@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.Available;
 
 abstract public class Configs {
-    protected HardwareMap map = null;
+    protected HardwareMap map;
     protected Telemetry telemetry = null;
     protected BOT bot = null;
 

@@ -61,9 +61,7 @@ public class ButtonHandler {
 
     // Remove named button from the handler
     public void deregister(String name) {
-        if (buttons.containsKey(name)) {
-            buttons.remove(name);
-        }
+        buttons.remove(name);
     }
 
     // Update stored state for all buttons, typically called once per OpMode loop()

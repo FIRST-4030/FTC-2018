@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.backgroundTask;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 public abstract class Background implements Runnable {
 
     private boolean running = false;

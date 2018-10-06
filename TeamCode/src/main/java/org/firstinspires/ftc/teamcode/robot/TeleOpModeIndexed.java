@@ -6,13 +6,10 @@ import org.firstinspires.ftc.teamcode.actuators.Motor;
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
-import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.common.Lights;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
-import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp Indexed Lift")
 public class TeleOpModeIndexed extends OpMode {

@@ -1,23 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.driveto.PID;
-import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
-import org.firstinspires.ftc.teamcode.robot.auto.Jewel;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.common.Drive;
-import org.firstinspires.ftc.teamcode.robot.common.Lift;
-import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
-import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
-import org.firstinspires.ftc.teamcode.utils.Round;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Simple Auto", group = "Test")
