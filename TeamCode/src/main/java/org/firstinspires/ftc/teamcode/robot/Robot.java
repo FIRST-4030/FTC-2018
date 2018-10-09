@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
-import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
-import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.SwitchConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.WheelsConfigs;
 import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
-import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 

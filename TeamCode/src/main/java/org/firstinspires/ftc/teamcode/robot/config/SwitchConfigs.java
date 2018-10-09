@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.SWITCHES;
 import org.firstinspires.ftc.teamcode.sensors.switches.Digital;
-import org.firstinspires.ftc.teamcode.sensors.switches.SWITCH_TYPES;
 import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.sensors.switches.SwitchConfig;
 import org.firstinspires.ftc.teamcode.sensors.switches.Voltage;
