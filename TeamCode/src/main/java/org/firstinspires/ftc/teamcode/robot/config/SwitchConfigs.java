@@ -38,26 +38,7 @@ public class SwitchConfigs extends Configs {
 
         SwitchConfig config = null;
         switch (bot) {
-            case WestCoast:
-                switch (name) {
-                    case LIFT:
-                        config = new SwitchConfig(SWITCH_TYPES.DIGITAL, "LS1");
-                        break;
-                }
-                break;
-            case Mecanum:
-                switch (name) {
-                    case LIFT:
-                        config = new SwitchConfig(SWITCH_TYPES.VOLTAGE, "LS1");
-                        break;
-                }
-                break;
-            case WestCoastClaw:
-                switch (name) {
-                    case LIFT:
-                        config = new SwitchConfig(SWITCH_TYPES.DIGITAL, "LS1");
-                        break;
-                }
+            case MecanumArm:
                 break;
         }
         return config;

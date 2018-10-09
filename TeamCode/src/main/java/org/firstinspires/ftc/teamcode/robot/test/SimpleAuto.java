@@ -48,7 +48,6 @@ public class SimpleAuto extends OpMode {
 
     @Override
     public void start() {
-        robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
         telemetry.clearAll();
         lift.init();
     }

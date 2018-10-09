@@ -41,13 +41,7 @@ public class GyroConfigs extends Configs {
 
         GyroConfig config = null;
         switch (bot) {
-            case WestCoast:
-                config = new GyroConfig(GYRO_TYPES.REV, "imu");
-                break;
-            case Mecanum:
-                config = new GyroConfig(GYRO_TYPES.MR, "gyro");
-                break;
-            case WestCoastClaw:
+            case MecanumArm:
                 config = new GyroConfig(GYRO_TYPES.REV, "imu");
                 break;
         }

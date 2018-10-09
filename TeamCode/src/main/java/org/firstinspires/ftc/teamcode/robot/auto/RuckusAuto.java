@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
-import org.firstinspires.ftc.teamcode.robot.common.Lights;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
@@ -33,7 +32,6 @@ public class RuckusAuto extends OpMode {
     private Robot robot = null;
     private Common common = null;
     private VuforiaFTC vuforia = null;
-    private Lights lights = null;
 
     // Runtime state
     private AutoDriver driver = new AutoDriver();
@@ -42,7 +40,6 @@ public class RuckusAuto extends OpMode {
     private boolean targetReady = false;
     private boolean gameReady = false;
     private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
-    private Lights.MODE lightsMode = Lights.MODE.OFF;
     private double liftTimer = 0;
 
     // Init-time config
@@ -56,7 +53,6 @@ public class RuckusAuto extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
-        lights = new Lights(robot, lightsMode);
         common = robot.common;
         vuforia = robot.vuforia;
 
@@ -85,9 +81,6 @@ public class RuckusAuto extends OpMode {
             // TODO: We need to zero the lift; for now just pretend
             liftReady = true;
         }
-
-        // Lights
-        lights.loop(lightsMode);
 
         // Process driver input
         buttons.update();
@@ -158,7 +151,6 @@ public class RuckusAuto extends OpMode {
 
         // Steady…
         state = AUTO_STATE.values()[0];
-        lightsMode = Lights.MODE.AUTO_INIT;
     }
 
     @Override
@@ -230,7 +222,6 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case DONE:
-                lightsMode = Lights.MODE.OFF;
                 driver.done = true;
                 break;
         }

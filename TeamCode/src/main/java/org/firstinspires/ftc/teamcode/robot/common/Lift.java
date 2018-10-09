@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.common;
 
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
-import org.firstinspires.ftc.teamcode.robot.INTAKES;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
@@ -41,10 +40,6 @@ public class Lift implements CommonTask {
                 liftState = liftState.next();
                 break;
             case START:
-                robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
-                for (INTAKES intake : INTAKES.values()) {
-                    robot.intakes[intake.ordinal()].setPower(INTAKE_SPEED_IN);
-                }
                 liftState = liftState.next();
                 break;
             case DONE:
@@ -68,40 +63,6 @@ public class Lift implements CommonTask {
         }
     }
 
-    public AutoDriver eject(AutoDriver driver) {
-        if (DEBUG) {
-            robot.telemetry.log().add("Eject state: " + ejectState);
-        }
-
-        switch (ejectState) {
-            case INIT:
-                driver.done = false;
-                ejectState = ejectState.next();
-                break;
-            case EJECT:
-                for (INTAKES intake : INTAKES.values()) {
-                    robot.intakes[intake.ordinal()].setPower(INTAKE_SPEED_OUT);
-                }
-                driver.interval = Lift.EJECT_DELAY;
-                ejectState = ejectState.next();
-                break;
-            case REVERSE:
-                driver.drive = robot.common.drive.distance(-REVERSE_MM);
-                ejectState = ejectState.next();
-                break;
-            case STOP:
-                for (INTAKES intake : INTAKES.values()) {
-                    robot.intakes[intake.ordinal()].stop();
-                }
-                ejectState = ejectState.next();
-                break;
-            case DONE:
-                driver.done = true;
-                break;
-        }
-        return driver;
-    }
-
     enum EJECT_STATE implements OrderedEnum {
         INIT,
         EJECT,
@@ -117,12 +78,4 @@ public class Lift implements CommonTask {
             return OrderedEnumHelper.next(this);
         }
     }
-
-    public AutoDriver intake(AutoDriver driver){
-        for (INTAKES intake : INTAKES.values()) {
-            robot.intakes[intake.ordinal()].setPower(INTAKE_SPEED_IN);
-        }
-        return driver;
-    }
-
 }

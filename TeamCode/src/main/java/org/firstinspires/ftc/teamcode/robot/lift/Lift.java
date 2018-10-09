@@ -31,13 +31,7 @@ public class Lift extends Background {
         this.motor = motor;
         this.button = button;
         switch (Robot.robot.bot) {
-            case WestCoast:
-                break;
-            case WestCoastClaw:
-                MAX = 6350;
-                HIGH = 6200;
-                LOW = 50;
-                MIDDLE = HIGH / 2; // 3250
+            case MecanumArm:
                 break;
         }
         pid.setTarget(LOW);

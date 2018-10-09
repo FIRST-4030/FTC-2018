@@ -35,7 +35,6 @@ public class Calibration extends OpMode {
         // These subsystems will change year-to-year but the framework is bot-agnostic
         subsystems.add(new Distance(this, robot, buttons));
         subsystems.add(new Turns(this, robot, buttons));
-        subsystems.add(new Claws(this, robot, buttons));
         subsystems.add(new Wheels(this, robot, buttons));
     }
 

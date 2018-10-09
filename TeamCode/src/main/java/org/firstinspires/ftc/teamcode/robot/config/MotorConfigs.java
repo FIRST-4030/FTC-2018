@@ -29,45 +29,17 @@ public class MotorConfigs extends Configs {
 
         MotorConfig config = null;
         switch (bot) {
-            case WestCoast:
-                switch (motor) {
+
+            case MecanumArm:
+                switch(motor) {
                     case LIFT:
-                        config = new MotorConfig("LM1", false, true);
+                        config = new MotorConfig("Lift", false);
                         break;
-                    case INTAKE_L:
-                        config = new MotorConfig("L_Intake", true);
+                    case ARM:
+                        config = new MotorConfig("Arm", false);
                         break;
-                    case INTAKE_R:
-                        config = new MotorConfig("R_Intake", true);
-                        break;
-                    case LIGHTS:
-                        config = new MotorConfig("Lights", true);
-                        break;
-                }
-                break;
-            case Mecanum: //
-                switch (motor) {
-                    case LIFT:
-                        config = new MotorConfig("LM1", false, true);
-                        break;
-                    case INTAKE_L:
-                        config = new MotorConfig("L_Intake", true);
-                        break;
-                    case INTAKE_R:
-                        config = new MotorConfig("R_Intake", true);
-                        break;
-                    case LIGHTS:
-                        config = new MotorConfig("Lights", true);
-                        break;
-                }
-                break;
-            case WestCoastClaw:
-                switch (motor) {
-                    case LIFT:
-                        config = new MotorConfig("LM1", false, true);
-                        break;
-                    case LIGHTS:
-                        config = new MotorConfig("Lights", true);
+                    case INTAKE:
+                        config = new MotorConfig("Intake", false);
                         break;
                 }
                 break;

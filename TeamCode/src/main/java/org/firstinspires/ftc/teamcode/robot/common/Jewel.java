@@ -150,44 +150,6 @@ public class Jewel implements CommonTask {
         }
     }
 
-    public AutoDriver hit(AutoDriver driver, Field.AllianceColor alliance) {
-        if (DEBUG) {
-            robot.telemetry.log().add("hitState: " + hitState);
-        }
-
-        switch (hitState) {
-            case INIT:
-                driver.done = false;
-                hitState = hitState.next();
-                break;
-            case DEPLOY_ARM:
-                robot.jewelArm.max();
-                driver.interval = ARM_DELAY;
-                hitState = hitState.next();
-                break;
-            case HIT_JEWEL:
-                driver.drive = robot.common.drive.timeTurn(PIVOT_MILLS,
-                        (pivotCCW(alliance) ? -1 : 1) * Drive.SPEED_FORWARD_SLOW);
-                hitState = hitState.next();
-                break;
-            case RETRACT_ARM:
-                robot.jewelArm.setPosition(Common.JEWEL_ARM_RETRACT);
-                driver.interval = ARM_DELAY;
-                hitState = hitState.next();
-                break;
-            case HIT_JEWEL_REVERSE:
-                driver.drive = robot.common.drive.timeTurn(PIVOT_MILLS,
-                        (pivotCCW(alliance) ? -1 : 1) * -Drive.SPEED_FORWARD_SLOW);
-                hitState = hitState.next();
-                break;
-            case DONE:
-                driver.done = true;
-                break;
-        }
-
-        return driver;
-    }
-
     public AutoDriver parse(AutoDriver driver) {
         if (DEBUG) {
             robot.telemetry.log().add("parseState: " + parseState);

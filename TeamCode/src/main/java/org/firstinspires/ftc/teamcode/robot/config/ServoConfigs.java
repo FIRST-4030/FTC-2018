@@ -28,33 +28,7 @@ public class ServoConfigs extends Configs {
 
         ServoConfig config = null;
         switch (bot) {
-            case WestCoast:
-                switch (servo) {
-                    case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
-                        break;
-                }
-                break;
-            case Mecanum:
-                switch (servo) {
-                    case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
-                        break;
-                }
-                break;
-            case WestCoastClaw:
-                switch (servo) {
-                    case JEWEL_ARM:
-                        config = new ServoConfig("Jewel Arm", true, 0.1f, 1.0f);
-                        break;
-                    case CLAW_TOP:
-                        config = new ServoConfig("CL1", true, 0.14f, 0.41f);
-                        break;
-                    case CLAW_BOTTOM:
-                        config = new ServoConfig("CL2", true, 0.11f, 0.41f);
-                        break;
-
-                }
+            case MecanumArm:
                 break;
         }
         return config;
