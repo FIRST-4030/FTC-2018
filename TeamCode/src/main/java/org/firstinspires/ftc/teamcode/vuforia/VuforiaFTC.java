@@ -121,7 +121,7 @@ public class VuforiaFTC {
             try {
                 parameters.cameraName = map.get(WebcamName.class, name);
             } catch (Exception e) {
-                telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
+                telemetry.log().add(this.getClass().getSimpleName() + "No such camera: " + name);
                 return;
             }
         } else if (direction != null) {
