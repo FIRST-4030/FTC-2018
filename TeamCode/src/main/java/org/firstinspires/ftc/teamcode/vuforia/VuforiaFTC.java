@@ -63,14 +63,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class VuforiaFTC {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     /**
      * TODO: If you downloaded this file from another team you need to get your own Vuforia key
      * See https://library.vuforia.com/articles/Solution/How-To-Create-an-App-License for instructions
      */
     // Team-specific Vuforia key
-    private static final String VUFORIA_KEY = "AbgpAh3/////AAAAGTwS0imaZU6wjVVHhw7cr1iHxcyPegw1+zPNzs+oNjtZlwpyvuwb2hdTLeEEj0gPTWUgVfLbnn6BrV6pafSnN8oCEEZrbVicTGw02BT+V0IzD43++kcsLVuumaM9yAUlAaDPiuEvEx6AZxYnM05KMzlAtMtfgW8tOIvjlicxep9tPhr1Z1Z3JrDt8s8mPo3GsSRSvpoSXZfxRLi0CwGEJlTuVrP59wLhsvr3CZ5Nr7gCNznhAaiGp4LhtCPoXsIUjsQHwO2hmskW670gZGIZl7BvqVbN5mIwqOYF3ZsCUkR83pM7jSIsOMdiaLK5ZlVLG+z5AfgoPNDZo8iYiqTncIiSUL5oJuh2NIeiG+nwcPJV";
+    private static final String VUFORIA_KEY = "AV9rwXT/////AAABma+8TAirNkVYosxu9qv0Uz051FVEjKU+nkH+MaIvGuHMijrdgoZYBZwCW2aG8P3+eZecZZPq9UKsZiTHAg73h09NT48122Ui10c8DsPe0Tx5Af6VaBklR898w8xCTdOUa7AlBEOa4KfWX6zDngegeZT5hBLfJKE1tiDmYhJezVDlITIh7SHBv0xBvoQuXhemlzL/OmjrnLuWoKVVW0kLanImI7yra+L8eOCLLp1BBD/Iaq2irZCdvgziZPnMLeTUEO9XUbuW8txq9i51anvlwY8yvMXLvIenNC1xg4KFhMmFzZ8xnpx4nWZZtyRBxaDU99aXm7cQgkVP0VD/eBIDYN4AcB0/Pa7V376m6tRJ5UZh";
 
     // Short names for external constants
     private static final AxesReference AXES_REFERENCE = AxesReference.EXTRINSIC;
@@ -111,12 +111,18 @@ public class VuforiaFTC {
         CONFIG_PHONE = VuforiaConfigs.Bot(bot);
         this.telemetry = telemetry;
 
-        parameters = new VuforiaLocalizer.Parameters();
+        // Optionally display the live monitor
         if (DEBUG) {
-            parameters.cameraMonitorViewIdParent = R.id.cameraMonitorViewId;
+            int cameraMonitorViewId = map.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", map.appContext.getPackageName());
+            parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        } else {
+            parameters = new VuforiaLocalizer.Parameters();
         }
+
+        // License
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
 
+        // Choose a camera
         if (map != null && name != null) {
             try {
                 parameters.cameraName = map.get(WebcamName.class, name);
