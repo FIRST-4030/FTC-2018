@@ -63,7 +63,7 @@ public class Robot {
 
         gyro = gyros.init();
 
-        vuforia = new VuforiaFTC(map, telemetry, bot);
+        vuforia = new VuforiaFTC(map, telemetry, bot, "Webcam");
 
         this.common = new Common(this);
     }

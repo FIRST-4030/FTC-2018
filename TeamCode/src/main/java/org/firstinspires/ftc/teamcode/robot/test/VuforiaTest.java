@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
-import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
-@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Vuforia Test", group = "Test")
 public class VuforiaTest extends OpMode {
 
@@ -19,8 +17,8 @@ public class VuforiaTest extends OpMode {
     // Dynamic things we need to remember
     private int lastBearing = 0;
     private int lastDistance = 0;
+    private String lastImage = "<None>";
     private String lastTarget = "<None>";
-    private RelicRecoveryVuMark lastMark = RelicRecoveryVuMark.UNKNOWN;
 
     @Override
     public void init() {
@@ -28,6 +26,7 @@ public class VuforiaTest extends OpMode {
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
         buttons = new ButtonHandler(robot);
+        buttons.register("CAPTURE", gamepad1, PAD_BUTTON.a);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -49,6 +48,15 @@ public class VuforiaTest extends OpMode {
         // Update our location and target info
         robot.vuforia.track();
 
+        // Capture
+        if (buttons.get("CAPTURE")) {
+            robot.vuforia.capture();
+        }
+        ImageFTC image = robot.vuforia.getImage();
+        if (image != null) {
+            lastImage = "Updated " + image.getTimestamp();
+        }
+
         // Collect data about the first visible target
         String target = null;
         int bearing = 0;
@@ -68,12 +76,9 @@ public class VuforiaTest extends OpMode {
             lastDistance = distance;
         }
 
-        // Read the VuMark
-        lastMark = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(VuforiaConfigs.TargetNames[0]));
-
         // Driver feedback
         robot.vuforia.display(telemetry);
-        telemetry.addData("Mark", lastMark);
+        telemetry.addData("Image", lastImage);
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.update();
     }

@@ -53,6 +53,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class VuforiaFTC {
     private final VuforiaTarget CONFIG_PHONE;
 
     // Dynamic things we need to remember
+    private boolean ready = false;
+    private Telemetry telemetry;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
@@ -106,6 +109,7 @@ public class VuforiaFTC {
     private VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot, String name, VuforiaLocalizer.CameraDirection direction) {
         CONFIG_TARGETS = VuforiaConfigs.Field();
         CONFIG_PHONE = VuforiaConfigs.Bot(bot);
+        this.telemetry = telemetry;
 
         parameters = new VuforiaLocalizer.Parameters();
         if (DEBUG) {
@@ -115,8 +119,7 @@ public class VuforiaFTC {
 
         if (map != null && name != null) {
             try {
-                WebcamName webcam = map.get(WebcamName.class, name);
-                parameters.cameraName = webcam;
+                parameters.cameraName = map.get(WebcamName.class, name);
             } catch (Exception e) {
                 telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
                 return;
@@ -126,6 +129,7 @@ public class VuforiaFTC {
         } else {
             parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         }
+        ready = true;
     }
 
     public VuforiaFTC(HardwareMap map, Telemetry telemetry, BOT bot, String name) {
@@ -141,12 +145,19 @@ public class VuforiaFTC {
     }
 
     public void start() {
-        if (isRunning()) {
+        if (isRunning() || !ready) {
             return;
         }
 
         // Init Vuforia
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        try {
+            vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        } catch (Exception e) {
+            telemetry.log().add("Unable to start Vuforia: " + e.toString());
+            stop();
+            ready = false;
+            return;
+        }
 
         /*
          * Pre-processed target images from the Vuforia target manager:
@@ -176,8 +187,10 @@ public class VuforiaFTC {
         if (!isRunning()) {
             return;
         }
-        targetsRaw.deactivate();
-        targetsRaw = null;
+        if (targetsRaw != null) {
+            targetsRaw.deactivate();
+            targetsRaw = null;
+        }
         targets.clear();
         vuforia = null;
     }
