@@ -31,6 +31,9 @@ public class WheelsConfig implements Config {
         this.motors = motors;
 
         for (WheelMotor motor : motors) {
+            if (motor == null || motor.motor == null || !motor.motor.isAvailable()) {
+                continue;
+            }
             motor.motor.setMode(mode);
             motor.motor.setBrake(brake);
         }
