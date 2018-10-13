@@ -22,11 +22,6 @@ public class RuckusAuto extends OpMode {
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
     private static final int START_ANGLE = -4;
     private static final int START_DISTANCE = 1120;
-    private static final int COLUMN_ANGLE_OFFSET = 13; // unused
-    private static final int COLUMN_DISTANCE_OFFSET = 205;
-    private static final int COLUMN_DRIVETO_OFFSET = 150;
-    private static final int EARLY_PILE_DISTANCE = 650;
-    private static final int COLUMN_CORNER_OFFSET = 175;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -39,12 +34,14 @@ public class RuckusAuto extends OpMode {
     private boolean liftReady = false;
     private boolean targetReady = false;
     private boolean gameReady = false;
-    private RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
-    private double liftTimer = 0;
 
     // Init-time config
     private ButtonHandler buttons;
     private Field.AllianceColor alliance = Field.AllianceColor.RED;
+    private boolean wallLeft = true;
+    private boolean claim = true;
+    private boolean returnLeft = true;
+    private boolean startCrater = true;
 
     @Override
     public void init() {
@@ -62,25 +59,22 @@ public class RuckusAuto extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("MODE-UP", gamepad1, PAD_BUTTON.dpad_right);
-        buttons.register("MODE-DOWN", gamepad1, PAD_BUTTON.dpad_left);
-        buttons.register("STONE-UP", gamepad1, PAD_BUTTON.y);
-        buttons.register("STONE-DOWN", gamepad1, PAD_BUTTON.a);
+        buttons.register("WALL-RIGHT", gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("WALL-LEFT", gamepad1, PAD_BUTTON.dpad_left);
+        buttons.register("START-CRATER", gamepad1, PAD_BUTTON.y);
+        buttons.register("START-DEPOT", gamepad1, PAD_BUTTON.a);
         buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
         buttons.register("ALLIANCE-BLUE", gamepad1, PAD_BUTTON.x);
 
-        buttons.register("EXTRA_BLOCK-UP", gamepad1, PAD_BUTTON.dpad_up);
-        buttons.register("EXTRA_BLOCK-DOWN", gamepad1, PAD_BUTTON.dpad_down);
+        buttons.register("CLAIM-YES", gamepad1, PAD_BUTTON.dpad_up);
+        buttons.register("CLAIM-NO", gamepad1, PAD_BUTTON.dpad_down);
+
+        buttons.register("RETURN-LEFT", gamepad1, PAD_BUTTON.left_bumper);
+        buttons.register("RETURN-RIGHT", gamepad1, PAD_BUTTON.right_bumper);
     }
 
     @Override
     public void init_loop() {
-
-        // Zero the lift
-        if (!liftReady) {
-            // TODO: We need to zero the lift; for now just pretend
-            liftReady = true;
-        }
 
         // Process driver input
         buttons.update();
@@ -90,22 +84,46 @@ public class RuckusAuto extends OpMode {
             alliance = Field.AllianceColor.BLUE;
         }
 
-        // Update Vuforia tracking, when available
-        if (vuforia.isRunning()) {
-            vuforia.track();
-            column = RelicRecoveryVuMark.from(vuforia.getTrackable(TARGET));
+        if (buttons.get("START-CRATER")) {
+            startCrater = true;
+            if(claim){
+                wallLeft = true;
+            }
+        } else if (buttons.get("START-DEPOT")) {
+            startCrater = false;
         }
-        targetReady = (vuforia.isRunning() && !vuforia.isStale() && vuforia.getVisible(TARGET));
+
+        if (buttons.get("CLAIM-YES")) {
+            claim = true;
+            if(startCrater){
+                wallLeft = true;
+            }
+        } else if (buttons.get("CLAIM-NO")) {
+            claim = false;
+        }
+
+        if(!(startCrater && claim)) {
+            if (buttons.get("WALL-LEFT")) {
+                wallLeft = true;
+            } else if (buttons.get("WALL-RIGHT")) {
+                wallLeft = false;
+            }
+        }
+
+        if(claim) {
+            if (buttons.get("RETURN-LEFT")) {
+                returnLeft = true;
+            } else if (buttons.get("RETURN-RIGHT")) {
+                returnLeft = false;
+            }
+        }
 
         // Driver setup
         telemetry.addData("Alliance", alliance);
-
-        // Positioning feedback
-        telemetry.addData("\t\t\t", "");
-        telemetry.addData("Start ∠",
-                targetReady ? (vuforia.getTargetAngle(TARGET) - START_ANGLE) + "°" : "<Not Visible>");
-        telemetry.addData("Start Distance",
-                targetReady ? (vuforia.getX() - START_DISTANCE) + "mm" : "<Not Visible>");
+        telemetry.addData("Start", (startCrater) ? "Crater" : "Depot");
+        telemetry.addData("Claiming", claim);
+        if(claim) telemetry.addData("Return Direction", returnLeft ? "Left" : "Right");
+        if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
 
         // Overall ready status
         gameReady = (robot.gyro.isReady() && targetReady && liftReady);
@@ -115,8 +133,6 @@ public class RuckusAuto extends OpMode {
         // Detailed feedback
         telemetry.addData("\t\t\t", "");
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
-        telemetry.addData("Column", column);
-        telemetry.addData("Lift", liftReady ? "Ready" : "Zeroing");
 
         // Update
         telemetry.update();
@@ -130,24 +146,6 @@ public class RuckusAuto extends OpMode {
         if (!gameReady) {
             telemetry.log().add("Started before ready");
         }
-
-        // Disable the lift if it isn't ready
-        if (!liftReady) {
-            robot.lift.setEnabled(false);
-            telemetry.log().add("Running without lift");
-        }
-
-        // Set the gyro offset, if available
-        if (targetReady) {
-            robot.gyro.setOffset(vuforia.getTargetAngle(TARGET));
-            column = RelicRecoveryVuMark.from(robot.vuforia.getTrackable(TARGET));
-            vuforia.track();
-        } else {
-            telemetry.log().add("Running without target alignment");
-        }
-
-        // Grab an image
-        vuforia.capture();
 
         // Steady…
         state = AUTO_STATE.values()[0];
