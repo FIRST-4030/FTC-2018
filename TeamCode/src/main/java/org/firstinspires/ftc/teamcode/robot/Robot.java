@@ -55,11 +55,8 @@ public class Robot {
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
-
         intake = motors.init(MOTORS.INTAKE);
         arm = motors.init(MOTORS.ARM);
-
-
 
         gyro = gyros.init();
 

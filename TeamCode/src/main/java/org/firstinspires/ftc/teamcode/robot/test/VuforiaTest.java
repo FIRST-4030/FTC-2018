@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -15,6 +16,7 @@ public class VuforiaTest extends OpMode {
     private ButtonHandler buttons;
 
     // Dynamic things we need to remember
+    private long lastImageTS = 0;
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastImage = "<None>";
@@ -26,6 +28,7 @@ public class VuforiaTest extends OpMode {
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
         buttons = new ButtonHandler(robot);
+        buttons.register("ENABLE", gamepad1, PAD_BUTTON.guide, BUTTON_TYPE.TOGGLE);
         buttons.register("CAPTURE", gamepad1, PAD_BUTTON.a);
 
         // Wait for the game to begin
@@ -49,12 +52,15 @@ public class VuforiaTest extends OpMode {
         robot.vuforia.track();
 
         // Capture
+        robot.vuforia.enableCapture(buttons.get("ENABLE"));
         if (buttons.get("CAPTURE")) {
             robot.vuforia.capture();
         }
         ImageFTC image = robot.vuforia.getImage();
-        if (image != null) {
-            lastImage = "Updated " + image.getTimestamp();
+        if (image != null && image.getTimestamp() != lastImageTS) {
+            lastImageTS = image.getTimestamp();
+            lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
+            image.savePNG("vuforia-" + image.getTimestamp() + ".png");
         }
 
         // Collect data about the first visible target
