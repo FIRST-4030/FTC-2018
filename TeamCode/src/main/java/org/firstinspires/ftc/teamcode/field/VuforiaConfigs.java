@@ -27,28 +27,27 @@ public class VuforiaConfigs {
 
     static public VuforiaTarget[] Field() {
         // TODO: These targets, locations and rotations are imaginary.
-        float[] ADJUST = {0, 0, 0};
 
         return new VuforiaTarget[]{
                 new VuforiaTarget(
                         TargetNames[0],
                         new float[]{0, Field.FIELD_WIDTH / 2, 0},
-                        ADJUST, new float[]{90, 0, 0}
+                        new float[]{90, 0, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[1],
                         new float[]{Field.FIELD_WIDTH / 2, 0, 0},
-                        ADJUST, new float[]{90, 90, 0}
+                        new float[]{90, 90, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[2],
                         new float[]{0, -Field.FIELD_WIDTH / 2, 0},
-                        ADJUST, new float[]{90, 180, 0}
+                        new float[]{90, 180, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[3],
                         new float[]{-Field.FIELD_WIDTH / 2, 0, 0},
-                        ADJUST, new float[]{90, 270, 0}
+                        new float[]{90, 270, 0}
                 )};
     }
 }

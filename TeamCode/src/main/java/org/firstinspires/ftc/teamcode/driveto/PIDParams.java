@@ -8,7 +8,7 @@ public class PIDParams {
     // If set, limit the accumulator value to the range ±maxAccumulator
     public Float maxAccumulator;
     // If true, reset the accumulated error whenever the error sign changes
-    // This is useful when the input() values are not rate-based (e.g. raw displacement or heading)
+    // This is useful when the input() values are not rate-based (e.g. location displacement or heading)
     public boolean resetAccumulatorOnErrorSignChange;
     // If true, reset the accumulator error whenever the target sign changes
     // This is usually desirable but might interfere with non-rate, non-normalized input() values

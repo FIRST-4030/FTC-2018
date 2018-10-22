@@ -32,7 +32,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.vuforia;
 
-import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.HINT;
@@ -53,7 +52,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.field.VuforiaConfigs;
-import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
 
 import java.util.ArrayList;
@@ -90,7 +88,7 @@ public class VuforiaFTC {
 
     // Dynamic things we need to remember
     private boolean ready = false;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private VuforiaLocalizer.Parameters parameters;
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
@@ -179,7 +177,7 @@ public class VuforiaFTC {
         }
 
         // Location and rotation of the image sensor plane relative to the robot
-        OpenGLMatrix phoneLocation = positionRotationMatrix(CONFIG_PHONE.raw, CONFIG_PHONE.rotation, CONFIG_PHONE.axesOrder);
+        OpenGLMatrix phoneLocation = positionRotationMatrix(CONFIG_PHONE.location, CONFIG_PHONE.rotation, CONFIG_PHONE.axesOrder);
         for (VuforiaTrackable trackable : targets) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(phoneLocation, parameters.cameraDirection);
         }
@@ -458,8 +456,8 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    public int bearing(int x, int y) {
-        return bearing(new int[]{getX(), getY()}, new int[]{x, y});
+    public int bearing(float x, float y) {
+        return bearing(new int[]{getX(), getY()}, new int[]{(int) x, (int) y});
     }
 
     /**
@@ -474,14 +472,14 @@ public class VuforiaFTC {
     }
 
     /**
-     * @param index CONFIG_TARGETS index. Syntax helper for {@link #bearing(int, int)} bearing(int, int)}
+     * @param index CONFIG_TARGETS index. Syntax helper for {@link #bearing(float, float)} bearing(int, int)}
      * @return Bearing from the current location to {x,y} with respect to field north
      * <p>
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
     public int bearing(int index) {
-        return bearing(CONFIG_TARGETS[index].adjusted[0], CONFIG_TARGETS[index].adjusted[1]);
+        return bearing(CONFIG_TARGETS[index].location[0], CONFIG_TARGETS[index].location[1]);
     }
 
     /**
@@ -492,19 +490,19 @@ public class VuforiaFTC {
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
-    public int distance(int x, int y) {
-        return distance(new int[]{getX(), getY()}, new int[]{x, y});
+    public int distance(float x, float y) {
+        return distance(new int[]{getX(), getY()}, new int[]{(int) x, (int) y});
     }
 
     /**
-     * @param index CONFIG_TARGETS index. Syntax helper for {@link #distance(int, int)} distance(int, int)}
+     * @param index CONFIG_TARGETS index. Syntax helper for {@link #distance(float, float)} distance(int, int)}
      * @return Distance from the current location to {x,y} with respect to field units (millimeters)
      * <p>
      * This value may be out-of-date. Most uses should include an evaluation of validity based on
      * {@link #isStale() isStale()} or {@link #getTimestamp() getTimestamp()}
      */
     public int distance(int index) {
-        return distance(CONFIG_TARGETS[index].adjusted[0], CONFIG_TARGETS[index].adjusted[1]);
+        return distance(CONFIG_TARGETS[index].location[0], CONFIG_TARGETS[index].location[1]);
     }
 
     /**
@@ -567,7 +565,7 @@ public class VuforiaFTC {
         // Location model parameters
         VuforiaTrackable trackable = trackables.get(index);
         trackable.setName(CONFIG_TARGETS[index].name);
-        OpenGLMatrix location = positionRotationMatrix(CONFIG_TARGETS[index].raw,
+        OpenGLMatrix location = positionRotationMatrix(CONFIG_TARGETS[index].location,
                 CONFIG_TARGETS[index].rotation, CONFIG_TARGETS[index].axesOrder);
         trackable.setLocation(location);
     }
