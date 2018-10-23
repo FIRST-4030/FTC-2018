@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.vuforia.ImageFTC;
 
-public class Jewel implements CommonTask {
+public class Sampling implements CommonTask {
     private static final boolean DEBUG = false;
 
     // Drive constants
@@ -31,7 +31,7 @@ public class Jewel implements CommonTask {
     private PARSE_STATE parseState;
     private HIT_STATE hitState;
 
-    public Jewel(Robot robot) {
+    public Sampling(Robot robot) {
         this.robot = robot;
         this.reset();
     }
