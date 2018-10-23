@@ -72,7 +72,11 @@ public class ImageFTC {
     }
 
     public boolean savePNG(String name) {
-        File file = new File(Environment.getExternalStoragePublicDirectory(SAVE_DIR_DEFAULT), name);
+        File dir = Environment.getExternalStoragePublicDirectory(SAVE_DIR_DEFAULT);
+        if (!dir.isDirectory()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, name);
         return save(file, Bitmap.CompressFormat.PNG, SAVE_QUALITY_DEFAULT);
     }
 
