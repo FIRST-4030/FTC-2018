@@ -15,7 +15,7 @@ public class Common {
 
     // Runtime
     public final Lift lift;
-    public final Jewel jewel;
+    public final Sampling sampling;
     public final Drive drive;
     private final Robot robot;
 
@@ -26,7 +26,7 @@ public class Common {
         this.robot = r;
 
         this.lift = new Lift(robot);
-        this.jewel = new Jewel(robot);
+        this.sampling = new Sampling(robot);
         this.drive = new Drive(robot);
     }
 }

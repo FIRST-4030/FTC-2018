@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.driveto.DriveToParams;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.utils.Heading;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
+import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
@@ -33,6 +35,10 @@ public class Drive implements CommonTask, DriveToListener {
 
     // Runtime
     private final Robot robot;
+
+    private HEADING_DIST_STATE headingDistState = HEADING_DIST_STATE.INIT;
+    private HEADING_DIST_HEADING_STATE headingDistHeadingState = HEADING_DIST_HEADING_STATE.INIT;
+
 
     public Drive(Robot robot) {
         this.robot = robot;
@@ -188,4 +194,90 @@ public class Drive implements CommonTask, DriveToListener {
                         param.reference + " ::" + param.comparator);
         }
     }
+    
+    public AutoDriver headingDistance(AutoDriver driver, float heading, int distance) {
+
+        switch(headingDistState) {
+            case INIT:
+                driver.done = false;
+                headingDistState = headingDistState.next();
+                break;
+            case HEADING:
+                driver.drive = heading(heading);
+                headingDistState = headingDistState.next();
+                break;
+            case DISTANCE:
+                driver.drive = distance(distance);
+                headingDistState = headingDistState.next();
+                break;
+            case DONE:
+                driver.done = true;
+                headingDistState = HEADING_DIST_STATE.INIT;
+                break;
+        }
+        return driver;
+    }
+
+    // I could probably delegate 75% of this method to the one above but what the hell, copy paste is a thing
+    public AutoDriver headingDistanceHeading(AutoDriver driver, float heading, int distance, float heading2) {
+
+        switch(headingDistHeadingState) {
+            case INIT:
+                driver.done = false;
+                headingDistHeadingState = headingDistHeadingState.next();
+                break;
+            case HEADING:
+                driver.drive = heading(heading);
+                headingDistHeadingState = headingDistHeadingState.next();
+                break;
+            case DISTANCE:
+                driver.drive = distance(distance);
+                headingDistHeadingState = headingDistHeadingState.next();
+                break;
+            case HEADING2:
+                driver.drive = heading(heading2);
+                headingDistHeadingState = headingDistHeadingState.next();
+            case DONE:
+                driver.done = true;
+                headingDistHeadingState = HEADING_DIST_HEADING_STATE.INIT;
+                break;
+        }
+        return driver;
+    }
+
+    enum HEADING_DIST_STATE implements OrderedEnum{
+
+        INIT,
+        HEADING,
+        DISTANCE,
+        DONE;
+
+        public HEADING_DIST_STATE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public HEADING_DIST_STATE next() {
+            return OrderedEnumHelper.next(this);
+        }
+
+    }
+
+    enum HEADING_DIST_HEADING_STATE implements OrderedEnum{
+
+        INIT,
+        HEADING,
+        DISTANCE,
+        HEADING2,
+        DONE;
+
+        public HEADING_DIST_HEADING_STATE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public HEADING_DIST_HEADING_STATE next() {
+            return OrderedEnumHelper.next(this);
+        }
+
+    }
+
 }

@@ -31,6 +31,7 @@ public class RuckusAuto extends OpMode {
     // Runtime state
     private AutoDriver driver = new AutoDriver();
     private AUTO_STATE state = AUTO_STATE.INIT;
+    private GOLD_POS gold = GOLD_POS.CENTER;
     private boolean liftReady = false;
     private boolean targetReady = false;
     private boolean gameReady = false;
@@ -42,6 +43,12 @@ public class RuckusAuto extends OpMode {
     private boolean claim = true;
     private boolean returnLeft = true;
     private boolean startCrater = true;
+
+    private int[] aproachPos;
+    private float centerSampleAngle;
+    private int[] depotPos;
+    private int[] parkSamePos; //pos for parking in the same color crater
+    private int[] parkDifferentPos;
 
     @Override
     public void init() {
@@ -77,6 +84,242 @@ public class RuckusAuto extends OpMode {
     public void init_loop() {
 
         // Process driver input
+        userSettings();
+
+        // Driver setup
+        telemetry.addData("Alliance", alliance);
+        telemetry.addData("Start", (startCrater) ? "Crater" : "Depot");
+        telemetry.addData("Claiming", claim);
+        if(claim) telemetry.addData("Return Direction", returnLeft ? "Left" : "Right");
+        if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
+
+        // Overall ready status
+        gameReady = (robot.gyro.isReady() && targetReady && liftReady);
+        telemetry.addData("\t\t\t", "");
+        telemetry.addData(">", gameReady ? "Ready for game start" : "NOT READY");
+
+        // Detailed feedback
+        telemetry.addData("\t\t\t", "");
+        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
+
+        // Update
+        telemetry.update();
+    }
+
+    @Override
+    public void start() {
+        telemetry.clearAll();
+
+        // Log if we didn't exit init as expected
+        if (!gameReady) {
+            telemetry.log().add("Started before ready");
+        }
+
+        // Steady…
+        state = AUTO_STATE.values()[0];
+
+        robot.vuforia.start();
+        robot.vuforia.enableCapture(true);
+
+
+        if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45);
+        if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45 + 90);
+        if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 90);
+        if(alliance == Field.AllianceColor.RED && startCrater) robot.gyro.setOffset(-45);
+
+        aproachPos = new int[]{}; // something
+        centerSampleAngle = 45;
+        depotPos = new int[]{};
+        parkSamePos = new int[]{};
+        parkDifferentPos = new int[]{};
+
+        if(startCrater) {
+            int temp = aproachPos[1];
+            aproachPos[1] = aproachPos[0];
+            aproachPos[0] = -temp;
+            centerSampleAngle += 90;
+        }
+
+        if(alliance == Field.AllianceColor.RED) {
+            aproachPos[0] *= -1;
+            aproachPos[1] *= -1;
+            centerSampleAngle += 180;
+            depotPos[0] *= -1;
+            depotPos[1] *= -1;
+            parkSamePos[0] *= -1;
+            parkSamePos[1] *= -1;
+            parkDifferentPos[0] *= -1;
+            parkDifferentPos[1] *= -1;
+        }
+
+    }
+
+    @Override
+    public void loop() {
+
+        // Handle AutoDriver driving
+        driver = common.drive.loop(driver);
+
+        // Update our location and target info
+        robot.vuforia.track();
+
+        // Debug feedback
+        telemetry.addData("State", state);
+        telemetry.addData("Running", driver.isRunning(time));
+        telemetry.addData("Pivot CCW", common.sampling.getImage() != null ? common.sampling.pivotCCW(alliance) : "<No Image>");
+        telemetry.addData("Gyro", Round.truncate(robot.gyro.getHeading()));
+        telemetry.addData("Encoder", robot.wheels.getEncoder());
+        telemetry.update();
+
+        /*
+         * Cut the loop short when we are AutoDriver'ing
+         * This keeps us out of the state machine until the preceding command is complete
+         */
+        if (driver.isRunning(time)) {
+            return;
+        }
+
+        // Main state machine, see enum for description of each state
+        switch (state) {
+            case INIT:
+                driver.done = false;
+                state = state.next();
+                break;
+            case LOWER_LIFT:
+                state = state.next();
+                break;
+            case PARSE_SAMPLE: // TODO: hey fix the insides of this method
+                driver = delegateDriver(common.sampling.parse(driver));
+                state = state.next();
+                break;
+            case DISMOUNT:
+                state = state.next();
+                break;
+            case TURN_TO_TARGET:
+                driver.drive = common.drive.heading(45);
+                state = state.next();
+                break;
+            case GO_TO_APPROACH: //TODO: fix meeeeeeeeeeeeeeeeeeee
+                float heading = 0;
+                int distance = 0;
+                if(!robot.vuforia.isStale()) {
+
+                } else {
+
+                }
+                driver = delegateDriver(common.drive.headingDistance(driver, heading, distance));
+                state = state.next();
+                break;
+            case SAMPLE:
+                driver.drive = common.drive.distance(gold.dist);
+                state = state.next();
+                break;
+            case REVERSE_SAMPLE:
+                driver.drive = common.drive.distance(-gold.dist);
+                state = state.next();
+                break;
+            case GO_TO_WALL:
+                state = state.next();
+                break;
+            case CLAIM_SKIP:
+                if(!claim) {
+                    state = AUTO_STATE.PARK;
+                } else {
+                    state = state.next();
+                }
+                break;
+            case MOVE_TO_BOX:
+                state = state.next();
+                break;
+            case DROP_FLAG:
+                state = state.next();
+                break;
+            case PARK:
+                state = state.next();
+                break;
+            case DONE:
+                driver.done = true;
+                break;
+        }
+    }
+
+    // Define the order of auto routine components
+    enum AUTO_STATE implements OrderedEnum { // this list is not complete or likely detailed enough
+        INIT,               // Initiate stuff
+
+        //// Dismounting and sampling ////
+        LOWER_LIFT,         //lower the lift
+
+        PARSE_SAMPLE,       //parse the sample and make a decision
+
+        DISMOUNT,           //unhook the hook, by translating or rotating
+
+        TURN_TO_TARGET,     //turn and look at the orientation target
+        GO_TO_APPROACH,     //drive to the approach location, hopefully using a target
+        SAMPLE,             //move to bump (hopefully) the gold
+        REVERSE_SAMPLE,     //reverse the previous move to back in front of the metals
+
+        GO_TO_WALL,         //Go either right or left to one of the walls
+
+        //// Claiming (optional) ////
+
+        CLAIM_SKIP,         //Skip claiming if selected OR in the invalid position
+        MOVE_TO_BOX,        //Drive to the box
+        DROP_FLAG,          //Drop the flag in the box
+
+        //// Parking ////
+
+        PARK,               //Drive to the correct parking location
+                            //if claimed, the user gets a choice here
+
+        DONE;               // Finish
+
+        public RuckusAuto.AUTO_STATE prev() {
+            return OrderedEnumHelper.prev(this);
+        }
+
+        public RuckusAuto.AUTO_STATE next() {
+            return OrderedEnumHelper.next(this);
+        }
+    }
+
+    enum GOLD_POS {
+        CENTER (0, 216),
+        LEFT (-15, 305),
+        RIGHT (15, 305);
+
+        public int offset;
+        public int dist;
+
+        GOLD_POS(int offset, int dist) {
+            this.offset = offset;
+            this.dist = dist;
+        }
+
+    }
+
+    // Utility function to delegate our AutoDriver to an external provider
+    // Driver is proxied back up to caller, state is advanced when delegate sets ::done
+    private AutoDriver delegateDriver(AutoDriver autoDriver) {
+        if (autoDriver.isDone()) {
+            autoDriver.done = false;
+            state = state.next();
+        }
+        return autoDriver;
+    }
+
+    // Process up/down buttons pairs for ordered enums
+    private OrderedEnum updateEnum(String name, OrderedEnum e) {
+        OrderedEnum retval = e;
+        if (buttons.get(name + "-UP")) {
+            retval = e.next();
+        } else if (buttons.get(name + "-DOWN")) {
+            retval = e.prev();
+        }
+        return retval;
+    }
+
+    private void userSettings(){
         buttons.update();
         if (buttons.get("ALLIANCE-RED")) {
             alliance = Field.AllianceColor.RED;
@@ -117,175 +360,6 @@ public class RuckusAuto extends OpMode {
                 returnLeft = false;
             }
         }
-
-        // Driver setup
-        telemetry.addData("Alliance", alliance);
-        telemetry.addData("Start", (startCrater) ? "Crater" : "Depot");
-        telemetry.addData("Claiming", claim);
-        if(claim) telemetry.addData("Return Direction", returnLeft ? "Left" : "Right");
-        if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
-
-        // Overall ready status
-        gameReady = (robot.gyro.isReady() && targetReady && liftReady);
-        telemetry.addData("\t\t\t", "");
-        telemetry.addData(">", gameReady ? "Ready for game start" : "NOT READY");
-
-        // Detailed feedback
-        telemetry.addData("\t\t\t", "");
-        telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
-
-        // Update
-        telemetry.update();
     }
 
-    @Override
-    public void start() {
-        telemetry.clearAll();
-
-        // Log if we didn't exit init as expected
-        if (!gameReady) {
-            telemetry.log().add("Started before ready");
-        }
-
-        // Steady…
-        state = AUTO_STATE.values()[0];
-    }
-
-    @Override
-    public void loop() {
-
-        // Handle AutoDriver driving
-        driver = common.drive.loop(driver);
-
-
-        // Debug feedback
-        telemetry.addData("State", state);
-        telemetry.addData("Running", driver.isRunning(time));
-        telemetry.addData("Pivot CCW", common.jewel.getImage() != null ? common.jewel.pivotCCW(alliance) : "<No Image>");
-        telemetry.addData("Gyro", Round.truncate(robot.gyro.getHeading()));
-        telemetry.addData("Encoder", robot.wheels.getEncoder());
-        telemetry.update();
-
-        /*
-         * Cut the loop short when we are AutoDriver'ing
-         * This keeps us out of the state machine until the preceding command is complete
-         */
-        if (driver.isRunning(time)) {
-            return;
-        }
-
-        // Main state machine, see enum for description of each state
-        switch (state) {
-            case INIT:
-                driver.done = false;
-                state = state.next();
-                break;
-            case DISMOUNT:
-                state = state.next();
-                break;
-            case GET_SAMPLE:
-                state = state.next();
-                break;
-            case PARSE_SAMPLE:
-                state = state.next();
-                break;
-            case TURN_TO_TARGET:
-                state = state.next();
-                break;
-            case GET_ORIENTATION:
-                state = state.next();
-                break;
-            case TURN_TO_SAMPLE:
-                state = state.next();
-                break;
-            case SAMPLE:
-                state = state.next();
-                break;
-            case REVERSE_SAMPLE:
-                state = state.next();
-                break;
-            case GO_TO_WALL:
-                state = state.next();
-                break;
-            case CLAIM_SKIP:
-                state = state.next();
-                break;
-            case MOVE_TO_BOX:
-                state = state.next();
-                break;
-            case DROP_FLAG:
-                state = state.next();
-                break;
-            case PARK:
-                state = state.next();
-                break;
-            case DONE:
-                driver.done = true;
-                break;
-        }
-    }
-
-    // Define the order of auto routine components
-    enum AUTO_STATE implements OrderedEnum { // this list is not complete or likely detailed enough
-        INIT,               // Initiate stuff
-
-        //// Dismounting and sampling ////
-        DISMOUNT,           //lower the lift and drive sideways a little
-
-        //this might be better after the getting orientation part
-        GET_SAMPLE,         //get the image of the metals
-        PARSE_SAMPLE,       //parse the sample and make a decision
-
-        TURN_TO_TARGET,     //turn and look at the orientation target
-        GET_ORIENTATION,    //get the image
-        TURN_TO_SAMPLE,     //turn back to face the samples
-
-        // could be either a turn and drive or a translate and drive
-        SAMPLE,             //move to bump (hopefully) the gold
-        REVERSE_SAMPLE,     //reverse the previous move to back in front of the metals
-
-        GO_TO_WALL,         //Go either right or left to one of the walls
-
-        //// Claiming (optional) ////
-
-        CLAIM_SKIP,         //Skip claiming if selected OR in the invalid position
-        MOVE_TO_BOX,        //Drive to the box
-        DROP_FLAG,          //Drop the flag in the box
-
-        //// Parking ////
-
-        PARK,               //Drive to the correct parking location
-                            //if claimed, the user gets a choice here
-
-        DONE;               // Finish
-
-        public RuckusAuto.AUTO_STATE prev() {
-            return OrderedEnumHelper.prev(this);
-        }
-
-        public RuckusAuto.AUTO_STATE next() {
-            return OrderedEnumHelper.next(this);
-        }
-    }
-
-    // Utility function to delegate our AutoDriver to an external provider
-    // Driver is proxied back up to caller, state is advanced when delegate sets ::done
-    private AutoDriver delegateDriver(AutoDriver autoDriver) {
-        if (autoDriver.isDone()) {
-            autoDriver.done = false;
-            state = state.next();
-        }
-        return autoDriver;
-    }
-
-    // Process up/down buttons pairs for ordered enums
-    private OrderedEnum updateEnum(String name, OrderedEnum e) {
-        OrderedEnum retval = e;
-        if (buttons.get(name + "-UP")) {
-            retval = e.next();
-        } else if (buttons.get(name + "-DOWN")) {
-            retval = e.prev();
-        }
-        return retval;
-    }
 }
