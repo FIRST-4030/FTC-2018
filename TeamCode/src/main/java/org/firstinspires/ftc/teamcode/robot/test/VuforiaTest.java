@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
@@ -21,6 +23,7 @@ public class VuforiaTest extends OpMode {
     private int lastDistance = 0;
     private String lastImage = "<None>";
     private String lastTarget = "<None>";
+    private boolean saved = false;
 
     @Override
     public void init() {
@@ -60,7 +63,11 @@ public class VuforiaTest extends OpMode {
         if (image != null && image.getTimestamp() != lastImageTS) {
             lastImageTS = image.getTimestamp();
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
-            image.savePNG("vuforia-" + image.getTimestamp() + ".png");
+            if (image.savePNG("vuforia-" + image.getTimestamp() + ".png")) {
+                saved = true;
+            } else {
+                saved = false;
+            }
         }
 
         // Collect data about the first visible target
@@ -87,6 +94,8 @@ public class VuforiaTest extends OpMode {
         telemetry.addData("Image", lastImage);
         telemetry.addData("Capture", robot.vuforia.capturing());
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
+        telemetry.addData("Saved", saved);
+        telemetry.addData("Photo Dir", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
         telemetry.update();
     }
 }
