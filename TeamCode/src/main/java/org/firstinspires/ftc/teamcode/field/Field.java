@@ -7,6 +7,8 @@ public class Field {
     public static final int HALF_FIELD_WIDTH = (int) ((FIELD_WIDTH_INCHES * MM_PER_INCH) / 2.0f);
     public static final float TARGET_HEIGHT = (6) * MM_PER_INCH;
 
+    public enum StartPosition {CRATER, FLAG}
+
     public enum AllianceColor {
         RED, BLUE;
 

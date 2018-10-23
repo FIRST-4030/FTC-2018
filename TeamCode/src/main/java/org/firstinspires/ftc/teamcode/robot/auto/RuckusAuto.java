@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -43,6 +42,9 @@ public class RuckusAuto extends OpMode {
     private boolean claim = true;
     private boolean returnLeft = true;
     private boolean startCrater = true;
+
+    // Maybe a params object?
+    private Params p;
 
     private int[] aproachPos;
     private float centerSampleAngle;
@@ -121,6 +123,10 @@ public class RuckusAuto extends OpMode {
         robot.vuforia.start();
         robot.vuforia.enableCapture(true);
 
+        // Set the right params for this match
+        p = new Params(alliance, Field.StartPosition.CRATER);
+        // And access the pre-match-adjusted data like this
+        telemetry.log().add("Jewel approach location: [" + p.jewel_approach[0] + "," + p.jewel_approach[1] + "]");
 
         if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45);
         if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45 + 90);
