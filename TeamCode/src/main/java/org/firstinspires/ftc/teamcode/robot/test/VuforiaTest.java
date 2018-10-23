@@ -85,6 +85,7 @@ public class VuforiaTest extends OpMode {
         // Driver feedback
         robot.vuforia.display(telemetry);
         telemetry.addData("Image", lastImage);
+        telemetry.addData("Capture", robot.vuforia.capturing());
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
         telemetry.update();
     }

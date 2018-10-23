@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.vuforia.VuforiaTarget;
  */
 public class VuforiaConfigs {
     public static final String AssetName = "RoverRuckus";
-    public static final String[] TargetNames = {"Space", "Dirt", "Rover", "Footprint"};
+    public static final String[] TargetNames = {"Rover", "Footprint", "Dirt", "Space"};
     public static final int TargetCount = TargetNames.length;
 
     static public VuforiaTarget Bot(BOT bot) {
@@ -31,23 +31,23 @@ public class VuforiaConfigs {
         return new VuforiaTarget[]{
                 new VuforiaTarget(
                         TargetNames[0],
-                        new float[]{0, Field.FIELD_WIDTH / 2, 0},
-                        new float[]{90, 0, 0}
+                        new float[]{Field.HALF_FIELD_WIDTH, 0, Field.TARGET_HEIGHT},
+                        new float[]{90, 270, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[1],
-                        new float[]{Field.FIELD_WIDTH / 2, 0, 0},
+                        new float[]{-Field.HALF_FIELD_WIDTH, 0, Field.TARGET_HEIGHT},
                         new float[]{90, 90, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[2],
-                        new float[]{0, -Field.FIELD_WIDTH / 2, 0},
-                        new float[]{90, 180, 0}
+                        new float[]{0, Field.HALF_FIELD_WIDTH, Field.TARGET_HEIGHT},
+                        new float[]{90, 0, 0}
                 ),
                 new VuforiaTarget(
                         TargetNames[3],
-                        new float[]{-Field.FIELD_WIDTH / 2, 0, 0},
-                        new float[]{90, 270, 0}
+                        new float[]{0, -Field.HALF_FIELD_WIDTH, Field.TARGET_HEIGHT},
+                        new float[]{90, 180, 0}
                 )};
     }
 }
