@@ -4,8 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
 
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,27 +14,14 @@ public class ImageFTC {
     private static final int GREEN = 1;
     private static final int BLUE = 2;
 
-    public static final int FORMAT_VUFORIA_DEFAULT = PIXEL_FORMAT.RGB565;
     public static final String SAVE_DIR_DEFAULT = Environment.DIRECTORY_PICTURES;
     public static final int SAVE_QUALITY_DEFAULT = 100;
 
-    private Bitmap bitmap;
-    private long timestamp;
+    private final Bitmap bitmap;
+    private final long timestamp;
 
-    public ImageFTC(Image img, int vuforiaFormat) {
-        Bitmap.Config format;
-        switch (vuforiaFormat) {
-            case PIXEL_FORMAT.RGBA8888:
-                format = Bitmap.Config.ARGB_8888;
-                break;
-            case PIXEL_FORMAT.RGB565:
-                format = Bitmap.Config.RGB_565;
-                break;
-            default:
-                throw new IllegalArgumentException("Unable to process Vuforia format: " + vuforiaFormat);
-        }
-        this.bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), format);
-        this.bitmap.copyPixelsFromBuffer(img.getPixels());
+    public ImageFTC(Bitmap bitmap) {
+        this.bitmap = bitmap;
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -73,9 +59,7 @@ public class ImageFTC {
 
     public boolean savePNG(String name) {
         File dir = Environment.getExternalStoragePublicDirectory(SAVE_DIR_DEFAULT);
-        if (!dir.isDirectory()) {
-            dir.mkdirs();
-        }
+        AppUtil.getInstance().ensureDirectoryExists(dir);
         File file = new File(dir, name);
         return save(file, Bitmap.CompressFormat.PNG, SAVE_QUALITY_DEFAULT);
     }

@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.test;
 
-import android.os.Environment;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -18,12 +15,10 @@ public class VuforiaTest extends OpMode {
     private ButtonHandler buttons;
 
     // Dynamic things we need to remember
-    private long lastImageTS = 0;
     private int lastBearing = 0;
     private int lastDistance = 0;
     private String lastImage = "<None>";
     private String lastTarget = "<None>";
-    private boolean saved = false;
 
     @Override
     public void init() {
@@ -31,7 +26,6 @@ public class VuforiaTest extends OpMode {
         // Init the robot
         robot = new Robot(hardwareMap, telemetry);
         buttons = new ButtonHandler(robot);
-        buttons.register("ENABLE", gamepad1, PAD_BUTTON.guide, BUTTON_TYPE.TOGGLE);
         buttons.register("CAPTURE", gamepad1, PAD_BUTTON.a);
 
         // Wait for the game to begin
@@ -43,8 +37,9 @@ public class VuforiaTest extends OpMode {
     public void start() {
         telemetry.clearAll();
 
-        // Start Vuforia tracking
+        // Start Vuforia tracking and enable capture
         robot.vuforia.start();
+        robot.vuforia.enableCapture();
     }
 
     @Override
@@ -55,19 +50,17 @@ public class VuforiaTest extends OpMode {
         robot.vuforia.track();
 
         // Capture
-        robot.vuforia.enableCapture(buttons.get("ENABLE"));
         if (buttons.get("CAPTURE")) {
             robot.vuforia.capture();
         }
-        ImageFTC image = robot.vuforia.getImage();
-        if (image != null && image.getTimestamp() != lastImageTS) {
-            lastImageTS = image.getTimestamp();
+        if (robot.vuforia.getImage() != null) {
+            ImageFTC image = robot.vuforia.getImage();
             lastImage = "(" + image.getWidth() + "," + image.getHeight() + ") " + image.getTimestamp();
-            if (image.savePNG("vuforia-" + image.getTimestamp() + ".png")) {
-                saved = true;
-            } else {
-                saved = false;
+            String filename = "vuforia-" + image.getTimestamp() + ".png";
+            if (!image.savePNG(filename)) {
+                telemetry.log().add(this.getClass().getSimpleName() + ": Unable to save file: " + filename);
             }
+            robot.vuforia.clearImage();
         }
 
         // Collect data about the first visible target
@@ -92,10 +85,7 @@ public class VuforiaTest extends OpMode {
         // Driver feedback
         robot.vuforia.display(telemetry);
         telemetry.addData("Image", lastImage);
-        telemetry.addData("Capture", robot.vuforia.capturing());
         telemetry.addData("Target (" + lastTarget + ")", lastDistance + "mm @ " + lastBearing + "°");
-        telemetry.addData("Saved", saved);
-        telemetry.addData("Photo Dir", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES));
         telemetry.update();
     }
 }

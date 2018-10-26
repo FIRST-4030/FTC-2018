@@ -64,7 +64,7 @@ public class RuckusAuto extends OpMode {
 
         // Init the camera system
         vuforia.start();
-        vuforia.enableCapture(true);
+        vuforia.enableCapture();
 
         // Register buttons
         buttons = new ButtonHandler(robot);
@@ -121,7 +121,7 @@ public class RuckusAuto extends OpMode {
         state = AUTO_STATE.values()[0];
 
         robot.vuforia.start();
-        robot.vuforia.enableCapture(true);
+        robot.vuforia.enableCapture();
 
         // Set the right params for this match
         p = new Params(alliance, Field.StartPosition.CRATER);

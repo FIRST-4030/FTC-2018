@@ -26,8 +26,7 @@ public class VuforiaConfigs {
     }
 
     static public VuforiaTarget[] Field() {
-        // TODO: These targets, locations and rotations are imaginary.
-
+        // Center of each wall
         return new VuforiaTarget[]{
                 new VuforiaTarget(
                         TargetNames[0],

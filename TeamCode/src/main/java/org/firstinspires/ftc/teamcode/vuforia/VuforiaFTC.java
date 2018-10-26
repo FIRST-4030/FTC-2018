@@ -32,14 +32,18 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.vuforia;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.util.ThreadPool;
+import com.vuforia.Frame;
 import com.vuforia.HINT;
-import com.vuforia.Image;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -57,8 +61,6 @@ import org.firstinspires.ftc.teamcode.utils.Heading;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class VuforiaFTC {
     private static final boolean DEBUG = true;
@@ -77,19 +79,15 @@ public class VuforiaFTC {
     // Cartesian heading constants
     private static final int HEADING_OFFSET = -Heading.FULL_CIRCLE / 4;
 
-    // Frame capture constants
-    private static final int CAPTURE_QUEUE_DISABLE = 0;
-    private static final int CAPTURE_QUEUE_LEN = 2;
-    private static final int CAPTURE_POLL_TIMEOUT = 100;
-
     // Tracking config
     private final VuforiaTarget[] CONFIG_TARGETS;
     private final VuforiaTarget CONFIG_PHONE;
 
     // Dynamic things we need to remember
     private boolean ready = false;
+    private boolean capture = false;
     private final Telemetry telemetry;
-    private VuforiaLocalizer.Parameters parameters;
+    private final VuforiaLocalizer.Parameters parameters;
     private VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
     private VuforiaTrackables targetsRaw;
@@ -286,48 +284,54 @@ public class VuforiaFTC {
      * @return True if frame capture is enabled
      */
     public boolean capturing() {
-        return isRunning() && vuforia.getFrameQueueCapacity() > CAPTURE_QUEUE_DISABLE;
+        return isRunning() && capture;
     }
 
     /**
-     * @param enable Enable or disable frame capture
+     * Enable frame capture -- not done by default because it consumes resources
      */
-    public void enableCapture(boolean enable) {
+    public void enableCapture() {
         if (!isRunning()) {
             return;
         }
-        vuforia.setFrameQueueCapacity(enable ? CAPTURE_QUEUE_LEN : CAPTURE_QUEUE_DISABLE);
-        if (!Vuforia.setFrameFormat(ImageFTC.FORMAT_VUFORIA_DEFAULT, enable)) {
-            throw new IllegalArgumentException("Could not enable image capture format: " + ImageFTC.FORMAT_VUFORIA_DEFAULT);
-        }
+        vuforia.enableConvertFrameToBitmap();
+        capture = true;
     }
 
-    /**
-     * Grab the currently available frame, if any
+    /*
+     * Grab the next available frame, if capture is enabled
      */
     public void capture() {
+        this.capture(null);
+    }
+
+    /*
+     * Grab the next available frame, if capture is enabled, optionally saving to disk
+     */
+    public void capture(final String filename) {
         if (!capturing()) {
             return;
         }
 
-        BlockingQueue<VuforiaLocalizer.CloseableFrame> queue = vuforia.getFrameQueue();
-        //noinspection EmptyCatchBlock
-        try {
-            VuforiaLocalizer.CloseableFrame frame = queue.poll(CAPTURE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
-            if (frame != null && frame.getNumImages() > 0) {
-                for (int i = 0; i < frame.getNumImages(); i++) {
-                    Image img = frame.getImage(i);
-                    if (img != null && img.getFormat() == ImageFTC.FORMAT_VUFORIA_DEFAULT) {
-                        image = new ImageFTC(img, ImageFTC.FORMAT_VUFORIA_DEFAULT);
-                        break;
+        // Clear the buffer first so upper layers can monitor image != null to ensure freshness
+        clearImage();
+
+        vuforia.getFrameOnce(Continuation.create(ThreadPool.getDefault(), new Consumer<Frame>() {
+            @Override
+            public void accept(Frame frame) {
+                Bitmap bitmap = vuforia.convertFrameToBitmap(frame);
+                if (bitmap == null) {
+                    telemetry.log().add(this.getClass().getSimpleName() + ": No frame captured");
+                    return;
+                }
+                image = new ImageFTC(bitmap);
+                if (filename != null) {
+                    if (!image.savePNG(filename)) {
+                        telemetry.log().add(this.getClass().getSimpleName() + ": Unable to save file: " + filename);
                     }
                 }
             }
-            if (frame != null) {
-                frame.close();
-            }
-        } catch (InterruptedException e) {
-        }
+        }));
     }
 
     /**
@@ -335,6 +339,13 @@ public class VuforiaFTC {
      */
     public ImageFTC getImage() {
         return image;
+    }
+
+    /**
+     * Clear the captured frame buffer
+     */
+    public void clearImage() {
+        image = null;
     }
 
     /**

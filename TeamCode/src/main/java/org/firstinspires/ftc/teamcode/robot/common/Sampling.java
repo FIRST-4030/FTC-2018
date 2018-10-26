@@ -173,10 +173,6 @@ public class Sampling implements CommonTask {
                     parseState = parseState.next();
                 }
                 break;
-            case DISABLE_CAPTURE:
-                robot.vuforia.enableCapture(false);
-                parseState = parseState.next();
-                break;
             case PARSE_JEWEL:
                 isLeftRed();
                 if (DEBUG) {
@@ -213,7 +209,6 @@ public class Sampling implements CommonTask {
         INIT,
         ENABLE_CAPTURE,     // Enable vuforia image capture
         WAIT_FOR_IMAGE,     // Make sure we don't try to do anything before Vuforia returns an image to analyze.
-        DISABLE_CAPTURE,    // Disable vuforia capture so we run faster (?)
         PARSE_JEWEL,        // Parse which jewel is on which side
         DONE;
 
