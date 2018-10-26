@@ -24,6 +24,7 @@ public class Robot {
     public final Motor lift;
     public final Motor arm;
     public final Motor intake;
+    public final Motor scoop;
     public final Gyro gyro;
     public final VuforiaFTC vuforia;
 
@@ -57,6 +58,7 @@ public class Robot {
 
         intake = motors.init(MOTORS.INTAKE);
         arm = motors.init(MOTORS.ARM);
+        scoop = motors.init(MOTORS.SCOOP);
 
         gyro = gyros.init();
 
