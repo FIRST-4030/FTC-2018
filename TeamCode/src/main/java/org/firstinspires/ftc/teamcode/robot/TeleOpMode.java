@@ -31,6 +31,10 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("INTAKE_IN", gamepad1, PAD_BUTTON.a);
+        buttons.register("INTAKE_OUT", gamepad1, PAD_BUTTON.y);
+        buttons.register("ARM_IN", gamepad1, PAD_BUTTON.b);
+        buttons.register("ARM_OUT", gamepad1, PAD_BUTTON.x);
         buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
@@ -83,9 +87,21 @@ public class TeleOpMode extends OpMode {
         robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
 
         // Intake
-        robot.intake.setPower(0.0f);
+        float intake = 0.0f;
+        if (buttons.get("INTAKE_IN")) {
+            intake = -1.0f;
+        } else if (buttons.get("INTAKE_OUT")) {
+            intake = 1.0f;
+        }
+        robot.intake.setPower(intake);
 
         // Scoop
-        robot.scoop.setPower(0.0f);
+        float scoop = 0.0f;
+        if (buttons.get("SCOOP_IN")) {
+            scoop = -1.0f;
+        } else if (buttons.get("SCOOP_OUT")) {
+            scoop = 1.0f;
+        }
+        robot.scoop.setPower(scoop);
     }
 }
