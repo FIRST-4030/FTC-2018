@@ -81,5 +81,11 @@ public class TeleOpMode extends OpMode {
 
         // Arm
         robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+
+        // Intake
+        robot.intake.setPower(0.0f);
+
+        // Scoop
+        robot.scoop.setPower(0.0f);
     }
 }
