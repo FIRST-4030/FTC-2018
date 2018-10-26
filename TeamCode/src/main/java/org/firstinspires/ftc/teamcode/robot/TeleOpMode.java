@@ -33,8 +33,8 @@ public class TeleOpMode extends OpMode {
         buttons = new ButtonHandler(robot);
         buttons.register("INTAKE_IN", gamepad1, PAD_BUTTON.a);
         buttons.register("INTAKE_OUT", gamepad1, PAD_BUTTON.y);
-        buttons.register("ARM_IN", gamepad1, PAD_BUTTON.b);
-        buttons.register("ARM_OUT", gamepad1, PAD_BUTTON.x);
+        buttons.register("SCOOP_IN", gamepad1, PAD_BUTTON.b);
+        buttons.register("SCOOP_OUT", gamepad1, PAD_BUTTON.x);
         buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
