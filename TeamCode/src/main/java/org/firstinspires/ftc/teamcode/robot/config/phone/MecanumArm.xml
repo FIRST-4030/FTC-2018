@@ -11,6 +11,8 @@
         <LynxModule name="Lift" port="4">
             <Motor name="Lift" port="0" />
             <Motor name="Arm" port="1" />
+            <Motor name="Intake" port="2" />
+            <Motor name="Scoop" port="3" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
