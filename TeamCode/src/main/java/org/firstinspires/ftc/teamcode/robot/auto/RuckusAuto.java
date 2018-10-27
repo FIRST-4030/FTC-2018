@@ -133,11 +133,11 @@ public class RuckusAuto extends OpMode {
         if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 90);
         if(alliance == Field.AllianceColor.RED && startCrater) robot.gyro.setOffset(-45);
 
-        aproachPos = new int[]{}; // something
+        aproachPos = new int[]{534, 534}; // something
         centerSampleAngle = 45;
         depotPos = new int[]{};
-        parkSamePos = new int[]{};
-        parkDifferentPos = new int[]{};
+        parkSamePos = new int[]{-457, 1626};
+        parkDifferentPos = new int[]{1626, -457};
 
         if(startCrater) {
             int temp = aproachPos[1];
@@ -209,22 +209,28 @@ public class RuckusAuto extends OpMode {
                 float heading = 0;
                 int distance = 0;
                 if(!robot.vuforia.isStale()) {
-
+                    //Need to figure out what dismouting looks like
                 } else {
-
+                    
                 }
                 driver = delegateDriver(common.drive.headingDistance(driver, heading, distance));
                 state = state.next();
                 break;
             case SAMPLE:
-                driver.drive = common.drive.distance(gold.dist);
+                driver = delegateDriver(common.drive.headingDistance(driver, centerSampleAngle + gold.offset, gold.dist));
                 state = state.next();
                 break;
             case REVERSE_SAMPLE:
                 driver.drive = common.drive.distance(-gold.dist);
                 state = state.next();
                 break;
-            case GO_TO_WALL:
+            case GO_TO_WALL_APROACH:
+                float heading1 = centerSampleAngle + (70 * (wallLeft ? 1 : -1));
+                float heading2 = centerSampleAngle + (135 * (wallLeft ? 1 : -1));
+                driver = delegateDriver(common.drive.headingDistanceHeading(driver, heading1, 940, heading2));
+                state = state.next();
+                break;
+            case TRANSLATE_TO_WALL: // TODO: translate in auto
                 state = state.next();
                 break;
             case CLAIM_SKIP:
@@ -265,7 +271,8 @@ public class RuckusAuto extends OpMode {
         SAMPLE,             //move to bump (hopefully) the gold
         REVERSE_SAMPLE,     //reverse the previous move to back in front of the metals
 
-        GO_TO_WALL,         //Go either right or left to one of the walls
+        GO_TO_WALL_APROACH,         //Go either right or left to one of the walls
+        TRANSLATE_TO_WALL,
 
         //// Claiming (optional) ////
 
@@ -290,9 +297,9 @@ public class RuckusAuto extends OpMode {
     }
 
     enum GOLD_POS {
-        CENTER (0, 216),
-        LEFT (-15, 305),
-        RIGHT (15, 305);
+        CENTER (0, 380),
+        LEFT (-45, 530),
+        RIGHT (45, 530);
 
         public int offset;
         public int dist;
