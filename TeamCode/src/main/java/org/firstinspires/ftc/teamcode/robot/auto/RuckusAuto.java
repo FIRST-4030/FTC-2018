@@ -42,6 +42,7 @@ public class RuckusAuto extends OpMode {
     private boolean claim = true;
     private boolean returnLeft = true;
     private boolean startCrater = true;
+    private boolean dismountNeeded = true;
 
     // Maybe a params object?
     private Params p;
@@ -80,6 +81,9 @@ public class RuckusAuto extends OpMode {
 
         buttons.register("RETURN-LEFT", gamepad1, PAD_BUTTON.left_bumper);
         buttons.register("RETURN-RIGHT", gamepad1, PAD_BUTTON.right_bumper);
+
+        buttons.register("DISMOUNT-YES", gamepad1, PAD_BUTTON.right_trigger);
+        buttons.register("DISMOUNT-NO", gamepad1, PAD_BUTTON.left_trigger);
     }
 
     @Override
@@ -91,6 +95,7 @@ public class RuckusAuto extends OpMode {
         // Driver setup
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Start", (startCrater) ? "Crater" : "Depot");
+        telemetry.addData("Dismount Needed", (dismountNeeded) ? "Yes" : "No");
         telemetry.addData("Claiming", claim);
         if(claim) telemetry.addData("Return Direction", returnLeft ? "Left" : "Right");
         if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
@@ -192,6 +197,9 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case LOWER_LIFT:
+                if(dismountNeeded){
+                    driver = delegateDriver(common.lift.lowerLift(driver));
+                }
                 state = state.next();
                 break;
             case PARSE_SAMPLE: // TODO: hey fix the insides of this method
@@ -199,19 +207,23 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case DISMOUNT:
+                if(dismountNeeded) {
+                    
+                }
                 state = state.next();
                 break;
             case TURN_TO_TARGET:
                 driver.drive = common.drive.heading(45);
                 state = state.next();
                 break;
-            case GO_TO_APPROACH: //TODO: fix meeeeeeeeeeeeeeeeeeee
+            case GO_TO_APPROACH: //TODO: fix me
                 float heading = 0;
                 int distance = 0;
                 if(!robot.vuforia.isStale()) {
                     //Need to figure out what dismouting looks like
                 } else {
-                    
+                    heading = robot.vuforia.bearing(aproachPos);
+                    distance = robot.vuforia.distance(aproachPos);
                 }
                 driver = delegateDriver(common.drive.headingDistance(driver, heading, distance));
                 state = state.next();
