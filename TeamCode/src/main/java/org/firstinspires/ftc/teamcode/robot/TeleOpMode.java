@@ -130,7 +130,7 @@ public class TeleOpMode extends OpMode {
          */
         float turnStick = gamepad1.left_stick_x;
         if(Math.abs(turnStick) > 0.5) {
-            turnStick = Math.copySign(1, turnStick) * servoAdjust;
+            turnStick = Math.copySign(servoAdjust, turnStick);
             robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + turnStick);
         }
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
