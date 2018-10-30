@@ -213,6 +213,10 @@ public class TankDrive implements Wheels {
         return rate;
     }
 
+    public void setSpeed(float x, float y, float rotation) {
+        this.setSpeed(x);
+    }
+
     public void setSpeed(float speed) {
         for (MOTOR_SIDE side : MOTOR_SIDE.values()) {
             setSpeed(speed, side);

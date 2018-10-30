@@ -76,6 +76,16 @@ public class DriveToParams {
         }
     }
 
+    public void translationPid(float target, PIDParams params, float tolerance, Float diffTolerance) {
+        this.comparator = DriveToComp.TRANSLATION_PID;
+        this.pid = new PID(params);
+        this.pid.setTarget(target);
+        this.limitRange = Math.abs(tolerance);
+        if (diffTolerance != null) {
+            this.diffRange = Math.abs(diffTolerance);
+        }
+    }
+
     // And so on
     // Setters are optional (due to public members) but useful for readability
 }
