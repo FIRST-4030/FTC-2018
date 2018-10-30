@@ -260,7 +260,7 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case PARK:
-                
+
                 state = state.next();
                 break;
             case DONE:

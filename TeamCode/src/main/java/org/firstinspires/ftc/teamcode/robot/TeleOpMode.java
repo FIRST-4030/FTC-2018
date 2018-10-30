@@ -13,6 +13,16 @@ public class TeleOpMode extends OpMode {
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
 
+    private final static int SCOOP_MAX = 100; //TODO: get a real number
+    private final static int SCOOP_MIN = 0;
+    private final static int INTAKE_MAX = 100;
+    private final static int INTAKE_MIN = 0;
+
+    private float servoAdjust = 0;
+
+    private final static float SERVO_TIME_SCALAR = .1f;
+    private long lastTS = System.currentTimeMillis();
+
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
@@ -31,10 +41,6 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("INTAKE_IN", gamepad1, PAD_BUTTON.a);
-        buttons.register("INTAKE_OUT", gamepad1, PAD_BUTTON.y);
-        buttons.register("SCOOP_IN", gamepad1, PAD_BUTTON.b);
-        buttons.register("SCOOP_OUT", gamepad1, PAD_BUTTON.x);
         buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
@@ -50,6 +56,10 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void loop() {
+        long now = System.currentTimeMillis();
+        servoAdjust = SERVO_TIME_SCALAR * (now - lastTS);
+        lastTS = now;
+
 
         // Update buttons
         buttons.update();
@@ -87,21 +97,30 @@ public class TeleOpMode extends OpMode {
         robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
 
         // Intake
-        float intake = 0.0f;
-        if (buttons.get("INTAKE_IN")) {
-            intake = -1.0f;
-        } else if (buttons.get("INTAKE_OUT")) {
-            intake = 1.0f;
-        }
+        float intake = -gamepad2.left_stick_y;
+        if(robot.intake.getEncoder() >= INTAKE_MAX) intake = Math.min(intake, 0);
+        if(robot.intake.getEncoder() <= INTAKE_MIN) intake = Math.max(intake, 0);
         robot.intake.setPower(intake);
 
         // Scoop
-        float scoop = 0.0f;
-        if (buttons.get("SCOOP_IN")) {
-            scoop = -1.0f;
-        } else if (buttons.get("SCOOP_OUT")) {
-            scoop = 1.0f;
-        }
+        float scoop = -gamepad2.right_stick_y;
+        if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
+        if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
         robot.scoop.setPower(scoop);
+
+        // Arm Turn
+        float turnStick = gamepad1.left_stick_x;
+        if(Math.abs(turnStick) > .5) {
+            if(turnStick > 0) {
+                turnStick = 1;
+            } else {
+                turnStick = -1;
+            }
+        } else {
+            turnStick = 0;
+        }
+        robot.armTurn.setPosition(robot.armTurn.getPostion() + (turnStick * servoAdjust));
+
+
     }
 }

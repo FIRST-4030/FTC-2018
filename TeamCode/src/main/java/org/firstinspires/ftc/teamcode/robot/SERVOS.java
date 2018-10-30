@@ -1,3 +1,3 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-public enum SERVOS {}
+public enum SERVOS {ARM_TURN}

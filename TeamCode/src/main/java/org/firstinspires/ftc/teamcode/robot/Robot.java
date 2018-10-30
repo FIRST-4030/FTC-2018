@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
@@ -25,6 +26,7 @@ public class Robot {
     public final Motor arm;
     public final Motor intake;
     public final Motor scoop;
+    public final ServoFTC armTurn;
     public final Gyro gyro;
     public final VuforiaFTC vuforia;
 
@@ -59,6 +61,8 @@ public class Robot {
         intake = motors.init(MOTORS.INTAKE);
         arm = motors.init(MOTORS.ARM);
         scoop = motors.init(MOTORS.SCOOP);
+
+        armTurn = servos.init(SERVOS.ARM_TURN);
 
         gyro = gyros.init();
 

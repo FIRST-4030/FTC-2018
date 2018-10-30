@@ -29,6 +29,11 @@ public class ServoConfigs extends Configs {
         ServoConfig config = null;
         switch (bot) {
             case MecanumArm:
+                switch (servo){
+                    case ARM_TURN:
+                        config = new ServoConfig("armTurn", false, .25f, .75f); // TODO: get real values here
+                        break;
+                }
                 break;
         }
         return config;
