@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.SwitchConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.WheelsConfigs;
 import org.firstinspires.ftc.teamcode.sensors.gyro.Gyro;
+import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 import org.firstinspires.ftc.teamcode.wheels.Wheels;
 
@@ -24,9 +25,11 @@ public class Robot {
     public final Wheels wheels;
     public final Motor lift;
     public final Motor arm;
-    public final Motor intake;
-    public final Motor scoop;
     public final ServoFTC armTurn;
+    public final Switch armSwitch;
+    public final Motor intake;
+    public final Switch intakeSwitch;
+    public final Motor scoop;
     public final Gyro gyro;
     public final VuforiaFTC vuforia;
 
@@ -58,14 +61,15 @@ public class Robot {
         lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
-        intake = motors.init(MOTORS.INTAKE);
         arm = motors.init(MOTORS.ARM);
+        armTurn = servos.init(SERVOS.ARM_TURN);
+        armSwitch = switches.init(SWITCHES.ARM);
+
+        intake = motors.init(MOTORS.INTAKE);
+        intakeSwitch = switches.init(SWITCHES.INTAKE);
         scoop = motors.init(MOTORS.SCOOP);
 
-        armTurn = servos.init(SERVOS.ARM_TURN);
-
         gyro = gyros.init();
-
         vuforia = new VuforiaFTC(map, telemetry, bot, "Webcam");
 
         this.common = new Common(this);

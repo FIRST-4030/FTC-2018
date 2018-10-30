@@ -1,3 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-public enum SWITCHES {}
+public enum SWITCHES {
+    ARM,
+    INTAKE
+}
