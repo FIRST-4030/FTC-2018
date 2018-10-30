@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.robot.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.actuators.Motor;
-import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
+import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
-import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
@@ -15,6 +15,10 @@ import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 public class CodeTeleop extends OpMode {
 
     private static final float SERVO_INCREMENT = 0.05f;
+    private static final String MOTOR_FWD = "_M_FWD";
+    private static final String MOTOR_BACK = "_M_BACK";
+    private static final String SERVO_FWD = "_S_FWD";
+    private static final String SERVO_BACK = "_S_BACK";
 
     // Devices and subsystems
     private Robot robot = null;
@@ -30,16 +34,16 @@ public class CodeTeleop extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("CHARMY_OUT", gamepad1, PAD_BUTTON.dpad_up);
-        buttons.register("CHARMY_IN", gamepad1, PAD_BUTTON.dpad_down);
-        buttons.register("SMARMY_OUT", gamepad1, PAD_BUTTON.dpad_left);
-        buttons.register("SMARMY_IN", gamepad1, PAD_BUTTON.dpad_right);
-        buttons.register("DUMPY_OUT", gamepad1, PAD_BUTTON.y);
-        buttons.register("DUMPY_IN", gamepad1, PAD_BUTTON.a);
-        buttons.register("DOC_OUT", gamepad1, PAD_BUTTON.x);
-        buttons.register("DOC_IN", gamepad1, PAD_BUTTON.b);
-        buttons.register("CHARMY_LEFT", gamepad1, PAD_BUTTON.left_bumper, BUTTON_TYPE.SINGLE_PRESS);
-        buttons.register("CHARMY_RIGHT", gamepad1, PAD_BUTTON.right_bumper, BUTTON_TYPE.SINGLE_PRESS);
+        buttons.register("CHARMY" + MOTOR_FWD, gamepad1, PAD_BUTTON.dpad_up);
+        buttons.register("CHARMY" + MOTOR_BACK, gamepad1, PAD_BUTTON.dpad_down);
+        buttons.register("CHARMY" + SERVO_FWD, gamepad1, PAD_BUTTON.left_bumper);
+        buttons.register("CHARMY" + SERVO_BACK, gamepad1, PAD_BUTTON.right_bumper);
+        buttons.register("SMARMY" + MOTOR_FWD, gamepad1, PAD_BUTTON.dpad_left);
+        buttons.register("SMARMY" + MOTOR_BACK, gamepad1, PAD_BUTTON.dpad_right);
+        buttons.register("DUMPY" + MOTOR_FWD, gamepad1, PAD_BUTTON.y);
+        buttons.register("DUMPY" + MOTOR_BACK, gamepad1, PAD_BUTTON.a);
+        buttons.register("DOC" + MOTOR_FWD, gamepad1, PAD_BUTTON.x);
+        buttons.register("DOC" + MOTOR_BACK, gamepad1, PAD_BUTTON.b);
     }
 
     @Override
@@ -60,30 +64,19 @@ public class CodeTeleop extends OpMode {
     public void loop() {
         buttons.update();
 
-        telemetry.addData("Charmy", robot.intake.getEncoder());
-        doButton("CHARMY", robot.intake);
+        updateMotor("CHARMY", robot.intake);
+        updateServo("CHARMY", robot.intakeTurn);
+        updateSwitch("CHARMY", robot.intakeSwitch);
+        updateMotor("SMARMY", robot.arm);
+        updateSwitch("SMARMY", robot.armSwitch);
+        updateMotor("DUMPY", robot.scoop);
+        updateMotor("DOC", robot.lift);
 
-        telemetry.addData("Smarmy", robot.arm.getEncoder());
-        doButton("SMARMY", robot.arm);
-
-        telemetry.addData("Dumpy", robot.scoop.getEncoder());
-        doButton("DUMPY", robot.scoop);
-
-        telemetry.addData("Gimili::Glick", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.BACK));
-        telemetry.addData("Gimili::Glaen", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.FRONT));
-        telemetry.addData("Gimili::Dad", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.BACK));
-        telemetry.addData("Gimili::Gloin", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.FRONT));
+        telemetry.addData("Gimli::Glick", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.BACK));
+        telemetry.addData("Gimli::Glaen", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.FRONT));
+        telemetry.addData("Gimli::Dad", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.BACK));
+        telemetry.addData("Gimli::Gloin", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.FRONT));
         robot.wheels.loop(gamepad1);
-
-        telemetry.addData("Doc", robot.lift.getEncoder());
-        doButton("DOC", robot.lift);
-
-        telemetry.addData("Charmy Turn", robot.armTurn.getPostion());
-        if (buttons.get("CHARMY_LEFT")) {
-            robot.armTurn.setPositionRaw(robot.armTurn.getPostion() - SERVO_INCREMENT);
-        } else if (buttons.get("CHARMY_RIGHT")) {
-            robot.armTurn.setPositionRaw(robot.armTurn.getPostion() + SERVO_INCREMENT);
-        }
 
         telemetry.update();
     }
@@ -92,13 +85,29 @@ public class CodeTeleop extends OpMode {
     public void stop() {
     }
 
-    private void doButton(String name, Motor motor) {
+    private void updateSwitch(String name, Switch d) {
+        telemetry.addData(name + " (D)", d.get());
+    }
+
+    private void updateMotor(String name, Motor motor) {
         float speed = 0;
-        if (buttons.get(name + "_IN")) {
+        if (buttons.held(name + MOTOR_BACK)) {
             speed = -1;
-        } else if (buttons.get(name + "_OUT")) {
+        } else if (buttons.held(name + MOTOR_FWD)) {
             speed = 1;
         }
         motor.setPower(speed);
+        telemetry.addData(name + " (M)", motor.getEncoder());
+    }
+
+    private void updateServo(String name, ServoFTC servo) {
+        float pos = servo.getPostion();
+        if (buttons.get(name + SERVO_BACK)) {
+            pos = Math.max(-1, pos - SERVO_INCREMENT);
+        } else if (buttons.get(name + SERVO_FWD)) {
+            pos = Math.min(1, pos + SERVO_INCREMENT);
+        }
+        servo.setPositionRaw(pos);
+        telemetry.addData(name + " (S)", robot.intakeTurn.getPostion());
     }
 }
