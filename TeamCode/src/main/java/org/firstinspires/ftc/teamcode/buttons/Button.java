@@ -8,6 +8,14 @@ public abstract class Button {
     protected long autokeyTimeout = 0;
     protected long longHeldTimeout = 0;
 
+    public void setAutokeyTimeout(long timeout) {
+        this.autokeyTimeout = timeout;
+    }
+
+    public void setLongHeldTimeout(long timeout) {
+        this.longHeldTimeout = timeout;
+    }
+
     public abstract void update(boolean button);
 
     public boolean active() {
