@@ -37,7 +37,7 @@ public class SwitchConfigs extends Configs {
 
         SwitchConfig config = null;
         switch (bot) {
-            case MecanumArm:
+            case PRODUCTION:
                 break;
         }
         return config;

@@ -30,16 +30,16 @@ public class MotorConfigs extends Configs {
         MotorConfig config = null;
         switch (bot) {
 
-            case MecanumArm:
+            case PRODUCTION:
                 switch(motor) {
                     case LIFT:
                         config = new MotorConfig("Lift", false);
                         break;
                     case ARM:
-                        config = new MotorConfig("Arm", false);
+                        config = new MotorConfig("Arm", true);
                         break;
                     case INTAKE:
-                        config = new MotorConfig("Intake", false);
+                        config = new MotorConfig("Intake", true);
                         break;
                     case SCOOP:
                         config = new MotorConfig("Scoop", false);

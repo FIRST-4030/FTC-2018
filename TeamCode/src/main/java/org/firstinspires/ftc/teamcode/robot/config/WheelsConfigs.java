@@ -50,7 +50,7 @@ public class WheelsConfigs extends Configs {
         WheelMotor[] motors;
         WheelsConfig config = null;
         switch (bot) {
-            case MecanumArm:
+            case PRODUCTION:
                 motors = new WheelMotor[4];
                 motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE);

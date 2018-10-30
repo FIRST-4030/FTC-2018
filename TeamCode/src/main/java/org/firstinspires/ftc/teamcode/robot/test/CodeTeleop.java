@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
+import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Code Teleop", group = "Test")
 public class CodeTeleop extends OpMode {
@@ -31,7 +33,7 @@ public class CodeTeleop extends OpMode {
         buttons.register("CHARMY_OUT", gamepad1, PAD_BUTTON.dpad_up);
         buttons.register("CHARMY_IN", gamepad1, PAD_BUTTON.dpad_down);
         buttons.register("SMARMY_OUT", gamepad1, PAD_BUTTON.dpad_left);
-        buttons.register("SMARMY_IN", gamepad1, PAD_BUTTON.dpad_left);
+        buttons.register("SMARMY_IN", gamepad1, PAD_BUTTON.dpad_right);
         buttons.register("DUMPY_OUT", gamepad1, PAD_BUTTON.y);
         buttons.register("DUMPY_IN", gamepad1, PAD_BUTTON.a);
         buttons.register("DOC_OUT", gamepad1, PAD_BUTTON.x);
@@ -67,20 +69,21 @@ public class CodeTeleop extends OpMode {
         telemetry.addData("Dumpy", robot.scoop.getEncoder());
         doButton("DUMPY", robot.scoop);
 
-        telemetry.addData("Gimili", robot.wheels.getEncoder());
+        telemetry.addData("Gimili::Glick", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.BACK));
+        telemetry.addData("Gimili::Glaen", robot.wheels.getEncoder(MOTOR_SIDE.LEFT, MOTOR_END.FRONT));
+        telemetry.addData("Gimili::Dad", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.BACK));
+        telemetry.addData("Gimili::Gloin", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.FRONT));
         robot.wheels.loop(gamepad1);
 
-        telemetry.addData("Doc", robot.scoop.getEncoder());
+        telemetry.addData("Doc", robot.lift.getEncoder());
         doButton("DOC", robot.lift);
 
-        /* Disabled until the servo is available
         telemetry.addData("Charmy Turn", robot.armTurn.getPostion());
         if (buttons.get("CHARMY_LEFT")) {
             robot.armTurn.setPositionRaw(robot.armTurn.getPostion() - SERVO_INCREMENT);
         } else if (buttons.get("CHARMY_RIGHT")) {
             robot.armTurn.setPositionRaw(robot.armTurn.getPostion() + SERVO_INCREMENT);
         }
-        */
 
         telemetry.update();
     }

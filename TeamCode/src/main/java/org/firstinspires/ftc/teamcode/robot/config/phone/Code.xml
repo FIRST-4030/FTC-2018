@@ -2,7 +2,7 @@
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2LZ39E" parentModuleAddress="4">
         <LynxModule name="Wheels" port="2">
-            <Motor name="FL" port="0" />
+            <Motor name="FL_Code" port="0" />
             <Motor name="FR" port="1" />
             <Motor name="BL" port="2" />
             <Motor name="BR" port="3" />
