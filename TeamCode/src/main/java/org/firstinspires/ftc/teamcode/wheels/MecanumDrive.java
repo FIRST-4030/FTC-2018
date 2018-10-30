@@ -23,12 +23,13 @@ public class MecanumDrive extends TankDrive {
         }
     }
 
-    private void translate(float xMagnitude, float yMagnitude, float rotation) {
+    @Override
+    public void setSpeed(float x, float y, float rotation) {
 
         // modified code from https://ftcforum.usfirst.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example
         // from dmssargent
-        double r = Math.hypot(xMagnitude, yMagnitude);
-        double robotAngle = Math.atan2(yMagnitude, xMagnitude) - Math.PI / 4;
+        double r = Math.hypot(x, y);
+        double robotAngle = Math.atan2(y, x) - Math.PI / 4;
         final float v1 = (float) (r * Math.cos(robotAngle)) + rotation;
         final float v2 = (float) (r * Math.sin(robotAngle)) - rotation;
         final float v3 = (float) (r * Math.sin(robotAngle)) + rotation;
@@ -48,6 +49,6 @@ public class MecanumDrive extends TankDrive {
         float lStickY = cleanJoystick(-pad.left_stick_y);
         float rStickX = cleanJoystick(pad.right_stick_x);
 
-        translate(rStickX, lStickY, lStickX);
+        setSpeed(rStickX, lStickY, lStickX);
     }
 }

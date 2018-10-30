@@ -87,6 +87,15 @@ public class Drive implements CommonTask, DriveToListener {
         return new DriveTo(new DriveToParams[]{param});
     }
 
+    public DriveTo translate(int millimeters) {
+        robot.wheels.setTeleop(false);
+
+        DriveToParams param = new DriveToParams(this, SENSOR_TYPE.DRIVE_ENCODER);
+        int target = (int) ((float) millimeters * robot.wheels.getTicksPerMM()) + robot.wheels.getEncoder();
+        param.translationPid(target, DRIVE_PARAMS, DRIVE_TOLERANCE, DRIVE_DIFF_TOLERANCE);
+        return new DriveTo(new DriveToParams[]{param});
+    }
+
     public DriveTo distance(int millimeters) {
         robot.wheels.setTeleop(false);
 
@@ -159,10 +168,13 @@ public class Drive implements CommonTask, DriveToListener {
         }
         switch ((SENSOR_TYPE) param.reference) {
             case DRIVE_ENCODER:
+                speed = param.pid.output();
                 switch (param.comparator) {
                     case PID:
-                        speed = param.pid.output();
                         robot.wheels.setSpeed(speed);
+                        break;
+                    case TRANSLATION_PID:
+                        robot.wheels.setSpeed(0, speed, 0);
                         break;
                     default:
                         throw new IllegalStateException("Unhandled driveToRun: " +
@@ -194,10 +206,10 @@ public class Drive implements CommonTask, DriveToListener {
                         param.reference + " ::" + param.comparator);
         }
     }
-    
+
     public AutoDriver headingDistance(AutoDriver driver, float heading, int distance) {
 
-        switch(headingDistState) {
+        switch (headingDistState) {
             case INIT:
                 driver.done = false;
                 headingDistState = headingDistState.next();
@@ -221,7 +233,7 @@ public class Drive implements CommonTask, DriveToListener {
     // I could probably delegate 75% of this method to the one above but what the hell, copy paste is a thing
     public AutoDriver headingDistanceHeading(AutoDriver driver, float heading, int distance, float heading2) {
 
-        switch(headingDistHeadingState) {
+        switch (headingDistHeadingState) {
             case INIT:
                 driver.done = false;
                 headingDistHeadingState = headingDistHeadingState.next();
@@ -245,8 +257,7 @@ public class Drive implements CommonTask, DriveToListener {
         return driver;
     }
 
-    enum HEADING_DIST_STATE implements OrderedEnum{
-
+    enum HEADING_DIST_STATE implements OrderedEnum {
         INIT,
         HEADING,
         DISTANCE,
@@ -262,8 +273,7 @@ public class Drive implements CommonTask, DriveToListener {
 
     }
 
-    enum HEADING_DIST_HEADING_STATE implements OrderedEnum{
-
+    enum HEADING_DIST_HEADING_STATE implements OrderedEnum {
         INIT,
         HEADING,
         DISTANCE,
@@ -279,5 +289,4 @@ public class Drive implements CommonTask, DriveToListener {
         }
 
     }
-
 }

@@ -10,6 +10,8 @@ public interface Wheels extends Available {
 
     void setSpeed(float speed);
 
+    void setSpeed(float x, float y, float rotation);
+
     void setSpeed(float speed, MOTOR_SIDE side);
 
     void setPowerRaw(float speed);
