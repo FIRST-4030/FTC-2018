@@ -45,7 +45,8 @@ public class Lift implements CommonTask {
                 driver.drive = robot.common.drive.distance(-90);
                 dismountState = dismountState.next();
                 break;
-            case TRANSLATE_OUT:
+            case ROTATE_TO_SEE:
+                driver.drive = robot.common.drive.degrees(45); // TODO: depends on where the camera is
                 dismountState = dismountState.next();
                 break;
             case DONE:
@@ -57,9 +58,8 @@ public class Lift implements CommonTask {
 
     enum LIFT_STATE implements OrderedEnum {
         INIT,
-        BACK_OFF,
-        TRANSLATE_OUT,
-
+        BACK_OFF, // TODO: Need a translate in here?
+        ROTATE_TO_SEE,
         DONE;
 
         public LIFT_STATE prev() {

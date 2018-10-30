@@ -133,10 +133,10 @@ public class RuckusAuto extends OpMode {
         // And access the pre-match-adjusted data like this
         telemetry.log().add("Jewel approach location: [" + p.jewel_approach[0] + "," + p.jewel_approach[1] + "]");
 
-        if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45);
-        if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45 + 90);
-        if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 90);
-        if(alliance == Field.AllianceColor.RED && startCrater) robot.gyro.setOffset(-45);
+        if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45 - 90);
+        if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45);
+        if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 180);
+        if(alliance == Field.AllianceColor.RED && startCrater) robot.gyro.setOffset(-45 - 90);
 
         aproachPos = new int[]{534, 534}; // something
         centerSampleAngle = 45;
@@ -203,12 +203,13 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case PARSE_SAMPLE: // TODO: hey fix the insides of this method
-                driver = delegateDriver(common.sampling.parse(driver));
+                //driver = delegateDriver(common.sampling.parse(driver));
+                //gold = common.sampling dot something
                 state = state.next();
                 break;
             case DISMOUNT:
                 if(dismountNeeded) {
-                    
+                    driver = delegateDriver(common.lift.dismount(driver));
                 }
                 state = state.next();
                 break;
@@ -216,7 +217,7 @@ public class RuckusAuto extends OpMode {
                 driver.drive = common.drive.heading(45);
                 state = state.next();
                 break;
-            case GO_TO_APPROACH: //TODO: fix me
+            case GO_TO_APPROACH: //TODO: fix me (depends on dismounting)
                 float heading = 0;
                 int distance = 0;
                 if(!robot.vuforia.isStale()) {
@@ -259,6 +260,7 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case PARK:
+                
                 state = state.next();
                 break;
             case DONE:
