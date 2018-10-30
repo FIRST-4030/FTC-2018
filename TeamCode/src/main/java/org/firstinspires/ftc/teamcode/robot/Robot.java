@@ -25,7 +25,7 @@ public class Robot {
     public final Wheels wheels;
     public final Motor lift;
     public final Motor arm;
-    public final ServoFTC armTurn;
+    public final ServoFTC intakeTurn;
     public final Switch armSwitch;
     public final Motor intake;
     public final Switch intakeSwitch;
@@ -62,7 +62,7 @@ public class Robot {
         lift.stop();
 
         arm = motors.init(MOTORS.ARM);
-        armTurn = servos.init(SERVOS.ARM_TURN);
+        intakeTurn = servos.init(SERVOS.ARM_TURN);
         armSwitch = switches.init(SWITCHES.ARM);
 
         intake = motors.init(MOTORS.INTAKE);

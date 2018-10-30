@@ -119,7 +119,7 @@ public class TeleOpMode extends OpMode {
         } else {
             turnStick = 0;
         }
-        robot.armTurn.setPosition(robot.armTurn.getPostion() + (turnStick * servoAdjust));
+        robot.intakeTurn.setPosition(robot.intakeTurn.getPostion() + (turnStick * servoAdjust));
 
 
     }
