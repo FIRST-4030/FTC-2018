@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.sensors.switches.Switch;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Code Teleop", group = "Test")
-public class CodeTeleop extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Hardware Test", group = "Test")
+public class HardwareTest extends OpMode {
 
     private static final float SERVO_INCREMENT = 0.05f;
     private static final String MOTOR_FWD = "_M_FWD";

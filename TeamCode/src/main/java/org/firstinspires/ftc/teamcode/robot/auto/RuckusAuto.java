@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Jewel + Block", group = "Auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Ruckus - Not Done", group = "Test")
 public class RuckusAuto extends OpMode {
 
     // Auto constants
