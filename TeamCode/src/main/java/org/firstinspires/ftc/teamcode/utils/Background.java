@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.backgroundTask;
-
-import org.firstinspires.ftc.teamcode.utils.Loopable;
+package org.firstinspires.ftc.teamcode.utils;
 
 public abstract class Background implements Runnable, Loopable {
     private boolean running = false;
