@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.actuators.Motor;
+import org.firstinspires.ftc.teamcode.actuators.PIDMotor;
 import org.firstinspires.ftc.teamcode.actuators.ServoFTC;
 import org.firstinspires.ftc.teamcode.config.BOT;
 import org.firstinspires.ftc.teamcode.robot.common.Common;
 import org.firstinspires.ftc.teamcode.robot.config.GyroConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.MotorConfigs;
+import org.firstinspires.ftc.teamcode.robot.config.PIDMotorConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.ServoConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.SwitchConfigs;
 import org.firstinspires.ftc.teamcode.robot.config.WheelsConfigs;
@@ -29,7 +31,7 @@ public class Robot {
     public final Switch armSwitch;
     public final Motor intake;
     public final Switch intakeSwitch;
-    public final Motor scoop;
+    public final PIDMotor scoop;
     public final Gyro gyro;
     public final VuforiaFTC vuforia;
 
@@ -52,6 +54,7 @@ public class Robot {
         GyroConfigs gyros = new GyroConfigs(map, telemetry, bot);
         WheelsConfigs wheels = new WheelsConfigs(map, telemetry, bot);
         MotorConfigs motors = new MotorConfigs(map, telemetry, bot);
+        PIDMotorConfigs pids = new PIDMotorConfigs(map, telemetry, bot);
         ServoConfigs servos = new ServoConfigs(map, telemetry, bot);
         SwitchConfigs switches = new SwitchConfigs(map, telemetry, bot);
 
@@ -67,7 +70,8 @@ public class Robot {
 
         intake = motors.init(MOTORS.INTAKE);
         intakeSwitch = switches.init(SWITCHES.INTAKE);
-        scoop = motors.init(MOTORS.SCOOP);
+        scoop = pids.init(MOTORS.SCOOP);
+        scoop.stop(); // Disable PID mode until we're ready
 
         gyro = gyros.init();
         vuforia = new VuforiaFTC(map, telemetry, bot, "Webcam");

@@ -59,7 +59,7 @@ public class ServoFTC implements Available {
         servo.setPosition(position);
     }
 
-    public float getPostion() {
+    public float getPosition() {
         if (!isAvailable()) {
             return ABS_MIN;
         }
@@ -76,7 +76,7 @@ public class ServoFTC implements Available {
 
     public void toggle() {
         float mid = (max + min) / 2;
-        if (getPostion() >= mid) {
+        if (getPosition() >= mid) {
             min();
         } else {
             max();

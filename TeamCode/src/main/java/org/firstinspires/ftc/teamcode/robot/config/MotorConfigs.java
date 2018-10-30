@@ -31,7 +31,7 @@ public class MotorConfigs extends Configs {
         switch (bot) {
 
             case PRODUCTION:
-                switch(motor) {
+                switch (motor) {
                     case LIFT:
                         config = new MotorConfig("Lift", false);
                         break;
@@ -40,9 +40,6 @@ public class MotorConfigs extends Configs {
                         break;
                     case INTAKE:
                         config = new MotorConfig("Intake", true);
-                        break;
-                    case SCOOP:
-                        config = new MotorConfig("Scoop", false);
                         break;
                 }
                 break;

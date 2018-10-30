@@ -59,6 +59,11 @@ public class ButtonHandler {
         buttons.put(name, b);
     }
 
+    // Return the underlying PadButton for external tweaks
+    public Button getListener(String name) {
+        return buttons.get(name).listener;
+    }
+
     // Remove named button from the handler
     public void deregister(String name) {
         buttons.remove(name);

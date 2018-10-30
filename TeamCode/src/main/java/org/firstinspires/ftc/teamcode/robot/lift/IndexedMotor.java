@@ -27,7 +27,7 @@ public class IndexedMotor extends Background {
     }
 
     @Override
-    protected void loop() {
+    public void loop() {
         if (!isAvailable()) {
             notAvailable();
         } else {

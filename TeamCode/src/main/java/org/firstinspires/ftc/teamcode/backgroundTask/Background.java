@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.backgroundTask;
 
-public abstract class Background implements Runnable {
+import org.firstinspires.ftc.teamcode.utils.Loopable;
 
+public abstract class Background implements Runnable, Loopable {
     private boolean running = false;
     private Thread thread;
 
@@ -25,6 +26,5 @@ public abstract class Background implements Runnable {
         }
     }
 
-    protected abstract void loop();
-
+    public abstract void loop();
 }

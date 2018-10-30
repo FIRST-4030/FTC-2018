@@ -9,9 +9,10 @@ import org.firstinspires.ftc.teamcode.utils.Available;
 public class Motor implements Available {
     public static final DcMotor.RunMode DEFAULT_MODE = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 
-    private DcMotor motor = null;
+    protected Telemetry telemetry;
+    protected DcMotor motor = null;
     private boolean enabled = true;
-    private int offset = 0;
+    protected int offset = 0;
 
     public Motor(HardwareMap map, Telemetry telemetry, MotorConfig config) {
         if (config == null) {
@@ -31,6 +32,7 @@ public class Motor implements Available {
             telemetry.log().add(this.getClass().getSimpleName() + " No such device: " + config.name);
             motor = null;
         }
+        this.telemetry = telemetry;
     }
 
     public void setEnabled(boolean enabled) {

@@ -101,13 +101,13 @@ public class HardwareTest extends OpMode {
     }
 
     private void updateServo(String name, ServoFTC servo) {
-        float pos = servo.getPostion();
+        float pos = servo.getPosition();
         if (buttons.get(name + SERVO_BACK)) {
-            pos = Math.max(-1, pos - SERVO_INCREMENT);
+            pos -= SERVO_INCREMENT;
         } else if (buttons.get(name + SERVO_FWD)) {
-            pos = Math.min(1, pos + SERVO_INCREMENT);
+            pos += SERVO_INCREMENT;
         }
         servo.setPositionRaw(pos);
-        telemetry.addData(name + " (S)", robot.intakeTurn.getPostion());
+        telemetry.addData(name + " (S)", robot.intakeTurn.getPosition());
     }
 }

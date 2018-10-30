@@ -107,20 +107,34 @@ public class TeleOpMode extends OpMode {
         if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
         robot.scoop.setPower(scoop);
+        // Example use as PIDMotor (compatible with setPower() while PID is stopped)
+        //robot.scoop.set(100);
 
-        // Arm Turn
+        // Intake Turn
+        /*
+         * This might be a good use for d-pad left/right with autokey, since there is no analog control
+         * If the intake arm is converted to PIDMotor the d-pad up/down would make sense there too
+         *
+         * Autokey example:
+         * buttons.register("INTAKE_LEFT", gamepad1, PAD_BUTTON.dpad_left);
+         * buttons.register("INTAKE_RIGHT", gamepad1, PAD_BUTTON.dpad_right);
+         * if (buttons.autokey("INTAKE_LEFT")) {
+         *     robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + CONSTANT);
+         * } else if (buttons.autokey("INTAKE_RIGHT")) {
+         *     robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() - CONSTANT);
+         * }
+         *
+         * You can adjust delay between autokey presses for each individual button like this:
+         *     buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(500);
+         * Or globally in buttons/Button.java::AUTOKEY_TIMEOUT
+         */
         float turnStick = gamepad1.left_stick_x;
-        if(Math.abs(turnStick) > .5) {
-            if(turnStick > 0) {
-                turnStick = 1;
-            } else {
-                turnStick = -1;
-            }
+        if(Math.abs(turnStick) > 0.5) {
+            turnStick = Math.copySign(1, turnStick);
         } else {
             turnStick = 0;
         }
-        robot.intakeTurn.setPosition(robot.intakeTurn.getPostion() + (turnStick * servoAdjust));
-
-
+        // getPosition() will never exceed the servo's configured limits, so this can't run too far
+        robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (turnStick * servoAdjust));
     }
 }

@@ -12,6 +12,17 @@ public class MotorConfig implements Config {
     public final boolean brake;
     public final DcMotor.RunMode mode;
 
+    public MotorConfig(MotorConfig config) {
+        if (config == null) {
+            throw new InvalidParameterException(this.getClass().getSimpleName() + ": Null config");
+        }
+
+        this.name = config.name;
+        this.reverse = config.reverse;
+        this.brake = config.brake;
+        this.mode = config.mode;
+    }
+
     public MotorConfig(String name, boolean reverse, boolean brake, DcMotor.RunMode mode) {
         if (name == null) {
             throw new InvalidParameterException(this.getClass().getSimpleName() + ": Null name");
