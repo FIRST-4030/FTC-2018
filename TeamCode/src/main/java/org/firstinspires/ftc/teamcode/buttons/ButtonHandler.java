@@ -61,7 +61,12 @@ public class ButtonHandler {
 
     // Return the underlying PadButton for external tweaks
     public Button getListener(String name) {
-        return buttons.get(name).listener;
+        PadButton button = buttons.get(name);
+        if (button == null) {
+            robot.telemetry.log().add("Unregistered listener: " + name);
+            return null;
+        }
+        return button.listener;
     }
 
     // Remove named button from the handler
