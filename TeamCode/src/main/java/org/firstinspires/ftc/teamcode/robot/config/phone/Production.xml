@@ -7,8 +7,8 @@
             <Motor name="Intake" port="2" />
             <Motor name="Scoop" port="3" />
             <Servo name="ArmTurn" port="0" />
-            <TouchSensor name="ArmSwitch" port="1" />
-            <TouchSensor name="IntakeSwitch" port="3" />
+            <RevTouchSensor name="ArmSwitch" port="1" />
+            <RevTouchSensor name="IntakeSwitch" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Wheels Hub" port="5">
