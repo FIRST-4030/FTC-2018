@@ -116,8 +116,8 @@ public class TeleOpMode extends OpMode {
          * If the intake arm is converted to PIDMotor the d-pad up/down would make sense there too
          *
          * Autokey example:
-         * buttons.register("INTAKE_LEFT", gamepad1, PAD_BUTTON.dpad_left);
-         * buttons.register("INTAKE_RIGHT", gamepad1, PAD_BUTTON.dpad_right);
+         * buttons.register("INTAKE_LEFT", gamepad2, PAD_BUTTON.dpad_left);
+         * buttons.register("INTAKE_RIGHT", gamepad2, PAD_BUTTON.dpad_right);
          * if (buttons.autokey("INTAKE_LEFT")) {
          *     robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + CONSTANT);
          * } else if (buttons.autokey("INTAKE_RIGHT")) {
@@ -128,7 +128,7 @@ public class TeleOpMode extends OpMode {
          *     buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(500);
          * Or globally in buttons/Button.java::AUTOKEY_TIMEOUT
          */
-        float turnStick = gamepad1.left_stick_x;
+        float turnStick = gamepad2.left_stick_x;
         if(Math.abs(turnStick) > 0.5) {
             turnStick = Math.copySign(servoAdjust, turnStick);
             robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + turnStick);
