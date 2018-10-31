@@ -9,14 +9,18 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
 
+    private boolean DEBUG = true;
+
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
 
     private final static int SCOOP_MAX = 100; //TODO: get a real number
     private final static int SCOOP_MIN = 0;
-    private final static int INTAKE_MAX = 100;
+    private final static int INTAKE_MAX = 4670;
     private final static int INTAKE_MIN = 0;
+    private final static int ARM_MAX = 8100;
+    private final static int ARM_MIN = 0;
 
     private float servoAdjust = 0;
 
@@ -73,6 +77,12 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Teleop", robot.wheels.isTeleop());
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
         telemetry.addData("Lift Height", robot.lift.getEncoder());
+
+        if(DEBUG) telemetry.addData("Arm Encoder", robot.arm.getEncoder());
+        if(DEBUG) telemetry.addData("Intake Encoder", robot.intake.getEncoder());
+        if(DEBUG) telemetry.addData("Scoop Encoder", robot.scoop.getEncoder());
+        if(DEBUG) telemetry.addData("Turn Index", robot.intakeTurn.getPosition());
+
         telemetry.update();
     }
 
@@ -94,7 +104,10 @@ public class TeleOpMode extends OpMode {
         robot.lift.setPower(liftPower);
 
         // Arm
-        robot.arm.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+        float arm = gamepad1.right_trigger - gamepad1.left_trigger;
+        if(robot.arm.getEncoder() >= ARM_MAX) arm = Math.min(arm, 0);
+        if(robot.arm.getEncoder() <= ARM_MIN) arm = Math.max(arm, 0);
+        robot.arm.setPower(arm);
 
         // Intake
         float intake = -gamepad2.left_stick_y;
