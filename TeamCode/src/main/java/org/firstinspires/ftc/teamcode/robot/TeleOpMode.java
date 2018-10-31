@@ -45,7 +45,7 @@ public class TeleOpMode extends OpMode {
         buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
-        buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(50);
+        buttons.getListener("INTAKE-TURN").setAutokeyTimeout(50);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
