@@ -22,10 +22,7 @@ public class TeleOpMode extends OpMode {
     private final static int ARM_MAX = 8100;
     private final static int ARM_MIN = 0;
 
-    private float servoAdjust = 0;
-
-    private final static float SERVO_TIME_SCALAR = .1f;
-    private long lastTS = System.currentTimeMillis();
+    private final static float SERVO_TIME_SCALAR = .0375f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -45,7 +42,10 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+
+        buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(50);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -60,10 +60,6 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void loop() {
-        long now = System.currentTimeMillis();
-        servoAdjust = SERVO_TIME_SCALAR * (now - lastTS);
-        lastTS = now;
-
 
         // Update buttons
         buttons.update();
@@ -141,11 +137,13 @@ public class TeleOpMode extends OpMode {
          *     buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(500);
          * Or globally in buttons/Button.java::AUTOKEY_TIMEOUT
          */
-        float turnStick = gamepad2.left_stick_x;
-        if(Math.abs(turnStick) > 0.5) {
-            turnStick = Math.copySign(servoAdjust, turnStick);
-            robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + turnStick);
+
+        if(buttons.autokey("INTAKE-TURN")) {
+
+            robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * -gamepad2.left_stick_x));
+
         }
+
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
 
     }
