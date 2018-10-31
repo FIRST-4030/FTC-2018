@@ -77,7 +77,7 @@ public class PIDMotor extends Motor {
         pid.setTarget(target);
     }
 
-    public boolean isAvailable() {
+    public boolean pidAvailable() {
         return super.isAvailable() && initialized;
     }
 
