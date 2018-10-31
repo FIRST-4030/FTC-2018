@@ -16,7 +16,7 @@ public class Digital implements Switch {
             button = map.digitalChannel.get(name);
         } catch (Exception e) {
             button = null;
-            telemetry.log().add(this.getClass().getSimpleName() + "No such device: " + name);
+            telemetry.log().add(this.getClass().getSimpleName() + ": No such device: " + name);
             return;
         }
 
