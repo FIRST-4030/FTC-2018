@@ -34,6 +34,7 @@ public class HardwareTest extends OpMode {
 
         // Buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("ENCODER_RESET", gamepad1, PAD_BUTTON.guide);
         buttons.register("CHARMY" + MOTOR_FWD, gamepad1, PAD_BUTTON.dpad_up);
         buttons.register("CHARMY" + MOTOR_BACK, gamepad1, PAD_BUTTON.dpad_down);
         buttons.register("CHARMY" + SERVO_FWD, gamepad1, PAD_BUTTON.left_bumper);
@@ -77,6 +78,17 @@ public class HardwareTest extends OpMode {
         telemetry.addData("Gimli::Dad", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.BACK));
         telemetry.addData("Gimli::Gloin", robot.wheels.getEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.FRONT));
         robot.wheels.loop(gamepad1);
+
+        if (buttons.get("ENCODER_RESET")) {
+            robot.intake.resetEncoder();
+            robot.arm.resetEncoder();
+            robot.scoop.resetEncoder();
+            robot.lift.resetEncoder();
+            robot.wheels.resetEncoder(MOTOR_SIDE.LEFT, MOTOR_END.BACK);
+            robot.wheels.resetEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.BACK);
+            robot.wheels.resetEncoder(MOTOR_SIDE.LEFT, MOTOR_END.FRONT);
+            robot.wheels.resetEncoder(MOTOR_SIDE.RIGHT, MOTOR_END.FRONT);
+        }
 
         telemetry.update();
     }
