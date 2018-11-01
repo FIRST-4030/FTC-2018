@@ -100,6 +100,8 @@ public class TeleOpMode extends OpMode {
         float liftPower = 0;
         if (gamepad1.left_bumper && !gamepad1.right_bumper) liftPower = -1;
         if (!gamepad1.left_bumper && gamepad1.right_bumper) liftPower = 1;
+        if (robot.lift.getEncoder() >= LIFT_MAX) liftPower = Math.min(liftPower, 0);
+        if (robot.lift.getEncoder() <= LIFT_MIN) liftPower = Math.max(liftPower, 0);
         robot.lift.setPower(liftPower);
 
         // Arm
