@@ -17,12 +17,15 @@ public class TeleOpMode extends OpMode {
 
     private final static int SCOOP_MAX = 100; //TODO: get a real number
     private final static int SCOOP_MIN = 0;
-    private final static int INTAKE_MAX = 4670;
-    private final static int INTAKE_MIN = 0;
-    private final static int ARM_MAX = 8100;
-    private final static int ARM_MIN = 0;
+    private final static int INTAKE_MAX = 4570;
+    private final static int INTAKE_MIN = 100;
+    private final static int ARM_MAX = 8000;
+    private final static int ARM_MIN = 100;
+    private final static int LIFT_MAX = 11222;
+    private final static int LIFT_MIN = 0;
 
-    private final static float SERVO_TIME_SCALAR = .0375f;
+
+    private final static float SERVO_TIME_SCALAR = .01875f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -43,9 +46,9 @@ public class TeleOpMode extends OpMode {
         // Register buttons
         buttons = new ButtonHandler(robot);
         buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
-        buttons.register("SLOW-MODE", gamepad2, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
-        buttons.getListener("INTAKE-TURN").setAutokeyTimeout(50);
+        buttons.getListener("INTAKE-TURN").setAutokeyTimeout(25);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -112,9 +115,9 @@ public class TeleOpMode extends OpMode {
         robot.intake.setPower(intake);
 
         // Scoop
-        float scoop = -gamepad2.right_stick_y;
-        if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
-        if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
+        float scoop = -gamepad2.right_stick_y * .25f;
+        //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
+        //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
         robot.scoop.setPower(scoop);
         // Example use as PIDMotor (compatible with setPower() while PID is stopped)
         //robot.scoop.set(100);
