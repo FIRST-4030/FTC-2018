@@ -28,6 +28,7 @@ public class Motor implements Available {
             setReverse(config.reverse);
             setBrake(config.brake);
             setMode(config.mode);
+            resetEncoder();
         } catch (Exception e) {
             telemetry.log().add(this.getClass().getSimpleName() + " No such device: " + config.name);
             motor = null;
