@@ -181,7 +181,7 @@ public class RuckusAuto extends OpMode {
         }
 
         // Main state machine, see enum for description of each state
-        switch (state) {
+        switch (state) { // TODO: fix all delegate driver things that then advance the state seperately
             case INIT:
                 driver.done = false;
                 state = state.next();
@@ -189,8 +189,9 @@ public class RuckusAuto extends OpMode {
             case LOWER_LIFT:
                 if(dismountNeeded){
                     driver = delegateDriver(common.lift.lowerLift(driver));
+                } else {
+                    state = state.next();
                 }
-                state = state.next();
                 break;
             case PARSE_SAMPLE: // TODO: hey fix the insides of this method
                 //driver = delegateDriver(common.sampling.parse(driver));
@@ -200,13 +201,14 @@ public class RuckusAuto extends OpMode {
             case DISMOUNT:
                 if(dismountNeeded) {
                     driver = delegateDriver(common.lift.dismount(driver));
+                } else {
+                    state = state.next();
                 }
-                state = state.next();
-                state = AUTO_STATE.DONE;
                 break;
             case TURN_TO_TARGET:
-                driver.drive = common.drive.heading(45);
-                state = state.next();
+                state = AUTO_STATE.DONE; //Hijacking this state to just end it all
+                //driver.drive = common.drive.heading(45);
+                //state = state.next();
                 break;
             case GO_TO_APPROACH: //TODO: fix me (depends on dismounting)
                 float heading = 0;
