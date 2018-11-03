@@ -212,6 +212,7 @@ public class RuckusAuto extends OpMode {
                     driver = delegateDriver(common.lift.dismount(driver));
                 }
                 state = state.next();
+                state = AUTO_STATE.DONE;
                 break;
             case TURN_TO_TARGET:
                 driver.drive = common.drive.heading(45);

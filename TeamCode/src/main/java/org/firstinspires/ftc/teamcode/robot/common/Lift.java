@@ -20,7 +20,7 @@ public class Lift implements CommonTask {
     private final static float EJECT_DELAY = 0.75f;
     private final static int REVERSE_MM = 250;
 
-    private final static int liftEncoderLowered = 100; // TODO: get a real value
+    private final static int liftEncoderLowered = 11222; // TODO: get a real value
 
     // Runtime
     private final Robot robot;
@@ -45,6 +45,10 @@ public class Lift implements CommonTask {
                 driver.drive = robot.common.drive.distance(-90);
                 dismountState = dismountState.next();
                 break;
+            case TRANSLATE:
+                driver.drive = robot.common.drive.translate(100);
+                dismountState = dismountState.next();
+                break;
             case ROTATE_TO_SEE:
                 driver.drive = robot.common.drive.degrees(45); // TODO: depends on where the camera is
                 dismountState = dismountState.next();
@@ -58,7 +62,8 @@ public class Lift implements CommonTask {
 
     enum LIFT_STATE implements OrderedEnum {
         INIT,
-        BACK_OFF, // TODO: Need a translate in here?
+        BACK_OFF,
+        TRANSLATE,
         ROTATE_TO_SEE,
         DONE;
 
