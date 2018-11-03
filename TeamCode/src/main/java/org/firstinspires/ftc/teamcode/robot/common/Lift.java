@@ -78,6 +78,8 @@ public class Lift implements CommonTask {
 
     public AutoDriver lowerLift(AutoDriver driver) {
 
+        robot.telemetry.log().add("State: " + lowerState);
+
         switch (lowerState) {
             case INIT:
                 driver.done = false;
@@ -87,6 +89,8 @@ public class Lift implements CommonTask {
             case WAIT:
                 if(robot.lift.getEncoder() >= liftEncoderLowered) {
                     lowerState = lowerState.next();
+                } else {
+                    robot.telemetry.log().add("Lift Encoder: " + robot.lift.getEncoder());
                 }
                 break;
             case DONE:
