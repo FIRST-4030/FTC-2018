@@ -81,7 +81,7 @@ public class Lift implements CommonTask {
         switch (lowerState) {
             case INIT:
                 driver.done = false;
-                robot.lift.setPower(1);
+                robot.lift.setPower(-1);
                 lowerState = lowerState.next();
                 break;
             case WAIT:
