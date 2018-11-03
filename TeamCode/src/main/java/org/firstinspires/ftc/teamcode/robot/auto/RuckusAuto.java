@@ -130,7 +130,7 @@ public class RuckusAuto extends OpMode {
 
         aproachPos = new int[]{534, 534}; // something
         centerSampleAngle = 45;
-        depotPos = new int[]{};
+        depotPos = new int[]{0, 0};
         parkSamePos = new int[]{-457, 1626};
         parkDifferentPos = new int[]{1626, -457};
 
