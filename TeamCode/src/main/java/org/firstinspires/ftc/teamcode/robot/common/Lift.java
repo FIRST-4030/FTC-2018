@@ -50,7 +50,11 @@ public class Lift implements CommonTask {
             //    dismountState = dismountState.next();
             //    break;
             case ROTATE_TO_SEE:
-                driver.drive = robot.common.drive.degrees(-45); // TODO: depends on where the camera is
+                driver.drive = robot.common.drive.degrees(-90); // TODO: depends on where the camera is
+                dismountState = dismountState.next();
+                break;
+            case SUPERMAN:
+                driver.drive = robot.common.drive.distance(-50); //WAHOOOOO
                 dismountState = dismountState.next();
                 break;
             case DONE:
@@ -64,6 +68,7 @@ public class Lift implements CommonTask {
         INIT,
         BACK_OFF,
         ROTATE_TO_SEE,
+        SUPERMAN,
         DONE;
 
         public LIFT_STATE prev() {
