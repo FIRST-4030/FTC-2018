@@ -31,8 +31,6 @@ public class RuckusAuto extends OpMode {
     private AutoDriver driver = new AutoDriver();
     private AUTO_STATE state = AUTO_STATE.INIT;
     private GOLD_POS gold = GOLD_POS.CENTER;
-    private boolean liftReady = false;
-    private boolean targetReady = false;
     private boolean gameReady = false;
 
     // Init-time config
@@ -43,9 +41,6 @@ public class RuckusAuto extends OpMode {
     private boolean returnLeft = true;
     private boolean startCrater = true;
     private boolean dismountNeeded = true;
-
-    // Maybe a params object?
-    private Params p;
 
     private int[] aproachPos;
     private float centerSampleAngle;
@@ -101,7 +96,7 @@ public class RuckusAuto extends OpMode {
         if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
 
         // Overall ready status
-        gameReady = (robot.gyro.isReady() && targetReady && liftReady);
+        gameReady = (robot.gyro.isReady());
         telemetry.addData("\t\t\t", "");
         telemetry.addData(">", gameReady ? "Ready for game start" : "NOT READY");
 
@@ -127,11 +122,6 @@ public class RuckusAuto extends OpMode {
 
         robot.vuforia.start();
         robot.vuforia.enableCapture();
-
-        // Set the right params for this match
-        p = new Params(alliance, Field.StartPosition.CRATER);
-        // And access the pre-match-adjusted data like this
-        telemetry.log().add("Jewel approach location: [" + p.jewel_approach[0] + "," + p.jewel_approach[1] + "]");
 
         if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45 - 90);
         if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45);
