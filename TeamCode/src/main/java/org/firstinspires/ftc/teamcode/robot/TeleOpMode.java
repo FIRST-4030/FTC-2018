@@ -25,7 +25,7 @@ public class TeleOpMode extends OpMode {
     private final static int LIFT_MIN = 0;
 
 
-    private final static float SERVO_TIME_SCALAR = .01875f;
+    private final static float SERVO_TIME_SCALAR = .025f;
 
     // Devices and subsystems
     private Robot robot = null;
@@ -117,7 +117,7 @@ public class TeleOpMode extends OpMode {
         robot.intake.setPower(intake);
 
         // Scoop
-        float scoop = -gamepad2.right_stick_y * .25f;
+        float scoop = -gamepad2.right_stick_y * .50f;
         //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
         robot.scoop.setPower(scoop);
