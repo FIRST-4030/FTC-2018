@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 public class TeleOpMode extends OpMode {
 
     private boolean DEBUG = true;
+    private boolean HASHTAG_NO_LIMITS = true;
 
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
@@ -77,10 +78,10 @@ public class TeleOpMode extends OpMode {
         telemetry.addData("Slow Mode", buttons.get("SLOW-MODE"));
         telemetry.addData("Lift Height", robot.lift.getEncoder());
 
-        if(DEBUG) telemetry.addData("Arm Encoder", robot.arm.getEncoder());
-        if(DEBUG) telemetry.addData("Intake Encoder", robot.intake.getEncoder());
-        if(DEBUG) telemetry.addData("Scoop Encoder", robot.scoop.getEncoder());
-        if(DEBUG) telemetry.addData("Turn Index", robot.intakeTurn.getPosition());
+        if (DEBUG) telemetry.addData("Arm Encoder", robot.arm.getEncoder());
+        if (DEBUG) telemetry.addData("Intake Encoder", robot.intake.getEncoder());
+        if (DEBUG) telemetry.addData("Scoop Encoder", robot.scoop.getEncoder());
+        if (DEBUG) telemetry.addData("Turn Index", robot.intakeTurn.getPosition());
 
         telemetry.update();
     }
@@ -100,20 +101,26 @@ public class TeleOpMode extends OpMode {
         float liftPower = 0;
         if (gamepad1.left_bumper && !gamepad1.right_bumper) liftPower = -1;
         if (!gamepad1.left_bumper && gamepad1.right_bumper) liftPower = 1;
-        if (robot.lift.getEncoder() >= LIFT_MAX) liftPower = Math.min(liftPower, 0);
-        if (robot.lift.getEncoder() <= LIFT_MIN) liftPower = Math.max(liftPower, 0);
+        if (!HASHTAG_NO_LIMITS) {
+            if (robot.lift.getEncoder() >= LIFT_MAX) liftPower = Math.min(liftPower, 0);
+            if (robot.lift.getEncoder() <= LIFT_MIN) liftPower = Math.max(liftPower, 0);
+        }
         robot.lift.setPower(liftPower);
 
         // Arm
         float arm = gamepad1.right_trigger - gamepad1.left_trigger;
-        if(robot.arm.getEncoder() >= ARM_MAX) arm = Math.min(arm, 0);
-        if(robot.arm.getEncoder() <= ARM_MIN) arm = Math.max(arm, 0);
+        if (!HASHTAG_NO_LIMITS) {
+            if (robot.arm.getEncoder() >= ARM_MAX) arm = Math.min(arm, 0);
+            if (robot.arm.getEncoder() <= ARM_MIN) arm = Math.max(arm, 0);
+        }
         robot.arm.setPower(arm);
 
         // Intake
         float intake = -gamepad2.left_stick_y;
-        if(robot.intake.getEncoder() >= INTAKE_MAX) intake = Math.min(intake, 0);
-        if(robot.intake.getEncoder() <= INTAKE_MIN) intake = Math.max(intake, 0);
+        if (!HASHTAG_NO_LIMITS) {
+            if (robot.intake.getEncoder() >= INTAKE_MAX) intake = Math.min(intake, 0);
+            if (robot.intake.getEncoder() <= INTAKE_MIN) intake = Math.max(intake, 0);
+        }
         robot.intake.setPower(intake);
 
         // Scoop
@@ -143,7 +150,7 @@ public class TeleOpMode extends OpMode {
          * Or globally in buttons/Button.java::AUTOKEY_TIMEOUT
          */
 
-        if(buttons.autokey("INTAKE-TURN")) {
+        if (buttons.autokey("INTAKE-TURN")) {
 
             robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * -gamepad2.left_stick_x));
 
