@@ -42,7 +42,7 @@ public class MotorConfigs extends Configs {
                         config = new MotorConfig("Intake", true);
                         break;
                     case SCOOP:
-                        config = new MotorConfig("Scoop", true);
+                        config = new MotorConfig("Scoop", true, true);
                         break;
                 }
                 break;
