@@ -11,15 +11,35 @@ public class MecanumDrive extends TankDrive {
         super(map, telemetry, config);
     }
 
-    public void setSpeed(float speed, MOTOR_SIDE side, MOTOR_END end) {
+    public void setPowerRaw(float speed, MOTOR_SIDE side, MOTOR_END end) {
+        if (side == null) {
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null SIDE");
+        }
+        if (end == null) {
+            throw new IllegalArgumentException(this.getClass().getSimpleName() + ": Null END");
+        }
         if (!isAvailable()) {
             return;
         }
-        // TODO: Add rate PID as used in TankDrive
         for (WheelMotor motor : config.motors) {
             if (motor.side == side && motor.end == end) {
                 motor.motor.setPower(speed * speedScale);
             }
+        }
+    }
+
+    public void setSpeed(float speed, MOTOR_SIDE side, MOTOR_END end) {
+        /*
+         * This could PID in software like TankDrive
+         * It doesn't though because RUN_WITH_ENCODERS from the Rev hub is good enough
+         */
+        setPowerRaw(speed, side, end);
+    }
+
+    @Override
+    public void setSpeed(float speed, MOTOR_SIDE side) {
+        for (MOTOR_END end : MOTOR_END.values()) {
+            setSpeed(speed, side, end);
         }
     }
 
