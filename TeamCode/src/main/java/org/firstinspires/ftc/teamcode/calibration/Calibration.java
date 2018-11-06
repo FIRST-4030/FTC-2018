@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.calibration;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.calibration.*;
 import java.util.Vector;
 
 @TeleOp(name = "Calibration", group = "Test")
+@Disabled
 public class Calibration extends OpMode {
     private static final String NEXT_SUBSYSTEM = "NEXT_SUBSYSTEM";
 
