@@ -32,7 +32,7 @@ public class PIDMotorConfigs extends Configs {
         PIDMotorConfig config = null;
         switch (bot) {
 
-            case PRODUCTION:
+            case PRODUCTION: case CODE:
                 switch (motor) {
                     case SCOOP:
                         MotorConfig m = new MotorConfig("Scoop", false);

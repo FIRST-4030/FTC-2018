@@ -30,7 +30,7 @@ public class MotorConfigs extends Configs {
         MotorConfig config = null;
         switch (bot) {
 
-            case PRODUCTION:
+            case PRODUCTION: case CODE:
                 switch (motor) {
                     case LIFT:
                         config = new MotorConfig("Lift", false);
