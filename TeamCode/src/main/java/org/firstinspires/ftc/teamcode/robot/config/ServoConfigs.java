@@ -31,7 +31,10 @@ public class ServoConfigs extends Configs {
             case PRODUCTION: case CODE:
                 switch (servo){
                     case ARM_TURN:
-                        config = new ServoConfig("ArmTurn", false, 0f, .95f); // TODO: get real values here
+                        config = new ServoConfig("ArmTurn", false, 0f, .95f);
+                        break;
+                    case FLAG_DROPPER:
+                        config = new ServoConfig("FlagDropper", false, 0f, 1f);
                         break;
                 }
                 break;
