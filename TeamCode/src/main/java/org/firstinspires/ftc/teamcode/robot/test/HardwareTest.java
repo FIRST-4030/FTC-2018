@@ -41,7 +41,7 @@ public class HardwareTest extends OpMode {
         buttons.register("CHARMY" + SERVO_FWD, gamepad1, PAD_BUTTON.left_bumper);
         buttons.register("CHARMY" + SERVO_BACK, gamepad1, PAD_BUTTON.right_bumper);
         buttons.register("FLAG_DROPPER" + SERVO_FWD, gamepad1, PAD_BUTTON.left_stick_button);
-        buttons.register("FLAG_DROPPER" + SERVO_BACK, gamepad1, PAD_BUTTON.left_stick_button);
+        buttons.register("FLAG_DROPPER" + SERVO_BACK, gamepad1, PAD_BUTTON.right_stick_button);
         buttons.register("SMARMY" + MOTOR_FWD, gamepad1, PAD_BUTTON.dpad_left);
         buttons.register("SMARMY" + MOTOR_BACK, gamepad1, PAD_BUTTON.dpad_right);
         buttons.register("DUMPY" + MOTOR_FWD, gamepad1, PAD_BUTTON.y);
