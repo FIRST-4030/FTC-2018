@@ -6,6 +6,7 @@
             <Motor name="FR" port="1" />
             <Motor name="BL" port="2" />
             <Motor name="BR" port="3" />
+            <Servo name="ArmTurn" port="0" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Lift" port="4">

@@ -26,7 +26,7 @@ public class TeleOpMode extends OpMode {
     private final static int LIFT_MIN = 0;
 
 
-    private final static float SERVO_TIME_SCALAR = .025f;
+    private final static float SERVO_TIME_SCALAR = .004375f;
 
     // Devices and subsystems
     private Robot robot = null;
