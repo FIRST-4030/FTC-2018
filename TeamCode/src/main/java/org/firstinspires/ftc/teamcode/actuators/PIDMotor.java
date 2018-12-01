@@ -82,7 +82,7 @@ public class PIDMotor extends Motor {
     }
 
     public void start() {
-        if (!isAvailable()) {
+        if (!pidAvailable()) {
             telemetry.log().add(this.getClass().getSimpleName() + ": Cannot start: " + config.name);
         }
 
