@@ -92,6 +92,7 @@ public class Lift implements CommonTask {
                 break;
             case WAIT:
                 if(robot.lift.getEncoder() >= liftEncoderLowered) {
+                    robot.lift.stop();
                     lowerState = lowerState.next();
                 } else {
                     robot.telemetry.log().add("Lift Encoder: " + robot.lift.getEncoder());

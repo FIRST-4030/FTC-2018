@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Sampling - Crater Only", group = "Test")
+@Disabled
 public class RuckusAuto2 extends OpMode {
 
     // Auto constants
