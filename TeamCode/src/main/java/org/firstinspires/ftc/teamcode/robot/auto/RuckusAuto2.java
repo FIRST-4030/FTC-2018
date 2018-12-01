@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "No Sampling - Crater Only", group = "Test")
-public class RuckusAuto extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Sampling - Crater Only", group = "Test")
+public class RuckusAuto2 extends OpMode {
 
     // Auto constants
     private static final String TARGET = VuforiaConfigs.TargetNames[0];
@@ -296,11 +296,11 @@ public class RuckusAuto extends OpMode {
 
         DONE;               // Finish
 
-        public RuckusAuto.AUTO_STATE prev() {
+        public RuckusAuto2.AUTO_STATE prev() {
             return OrderedEnumHelper.prev(this);
         }
 
-        public RuckusAuto.AUTO_STATE next() {
+        public RuckusAuto2.AUTO_STATE next() {
             return OrderedEnumHelper.next(this);
         }
     }

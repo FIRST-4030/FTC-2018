@@ -28,7 +28,8 @@ public class TeleOpMode extends OpMode {
     private final static int INTAKE_CLOSE_MULTIPLIER = 10;
 
     private final static float SERVO_TIME_SCALAR = 0.00525f;
-    private final static float SCOOP_SPEED = 25;
+
+    private final static float SCOOP_SPEED = 75;
 
     // Fine motor control system
     private float last_goal;
