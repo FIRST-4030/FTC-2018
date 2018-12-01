@@ -192,4 +192,8 @@ public class TeleOpMode extends OpMode {
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
 
     }
+
+    public void stop(){
+        robot.scoop.stop();
+    }
 }
