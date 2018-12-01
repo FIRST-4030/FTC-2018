@@ -24,11 +24,12 @@ public class TeleOpMode extends OpMode {
     private final static int ARM_MIN = 100;
     private final static int LIFT_MAX = 11222;
     private final static int LIFT_MIN = 0;
-    private final static int INTAKE_FINE_MOTOR_CONTROL = 300;
+    private final static int INTAKE_FINE_MOTOR_CONTROL = 350;
+    private final static int INTAKE_CLOSE_MULTIPLIER = 12;
 
     private final static float SERVO_TIME_SCALAR = 0.00525f;
-
     private final static float SCOOP_SPEED = 25;
+
     // Fine motor control system
     private float last_goal;
 
@@ -177,11 +178,10 @@ public class TeleOpMode extends OpMode {
 
         if (buttons.autokey("INTAKE-TURN")) {
             if (Math.abs(last_goal - robot.intakeTurn.getPosition()) < INTAKE_FINE_MOTOR_CONTROL) {
-                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x * 7));
+                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x * INTAKE_CLOSE_MULTIPLIER));
             } else {
                 robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x));
             }
-
         }
 
         if (!buttons.autokey("INTAKE-TURN")) {
