@@ -148,7 +148,7 @@ public class TeleOpMode extends OpMode {
         //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
 
-        robot.scoop.set((int) robot.scoop.getEncoder() + ((int) (-gamepad2.right_stick_y * SCOOP_SPEED)));
+        robot.scoop.set(robot.scoop.getEncoder() + ((int) (-gamepad2.right_stick_y * SCOOP_SPEED)));
 
         // Example use as PIDMotor (compatible with setPower() while PID is stopped)
         //robot.scoop.set(100);
