@@ -36,7 +36,7 @@ public class PIDMotorConfigs extends Configs {
                 switch (motor) {
                     case SCOOP:
                         MotorConfig m = new MotorConfig("Scoop", false, true);
-                        config = new PIDMotorConfig(m, new PIDParams(.001f, 0.00001f, 0f), -200, 1400);
+                        config = new PIDMotorConfig(m, new PIDParams(.003f, 0.00001f, 0f), -200, 1400);
                         break;
                 }
                 break;
