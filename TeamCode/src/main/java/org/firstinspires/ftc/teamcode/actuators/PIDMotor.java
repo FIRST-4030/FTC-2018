@@ -14,7 +14,7 @@ public class PIDMotor extends Motor {
     private Background background;
     private final PIDMotorConfig config;
     private boolean initialized;
-    private final PID pid;
+    public final PID pid; // sorry private variable!!!
 
     public PIDMotor(HardwareMap map, Telemetry telemetry, PIDMotorConfig config) {
         super(map, telemetry, config);

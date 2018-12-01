@@ -69,6 +69,7 @@ public class TeleOpMode extends OpMode {
     public void start() {
         robot.wheels.setTeleop(true);
         robot.scoop.setInitialized();
+        robot.scoop.pid.setTarget(robot.scoop.getEncoder());
         robot.scoop.start();
     }
 
