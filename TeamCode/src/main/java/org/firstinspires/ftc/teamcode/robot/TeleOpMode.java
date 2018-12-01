@@ -68,9 +68,9 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
-        robot.scoop.setInitialized();
-        robot.scoop.pid.setTarget(robot.scoop.getEncoder());
-        robot.scoop.start();
+        //robot.scoop.setInitialized();
+        //robot.scoop.pid.setTarget(robot.scoop.getEncoder());
+        //robot.scoop.start();
     }
 
     @Override
@@ -154,7 +154,9 @@ public class TeleOpMode extends OpMode {
         //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
 
-        robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
+        //robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
+
+        robot.scoop.setPower(-gamepad2.right_stick_y * .50f);
 
         // Example use as PIDMotor (compatible with setPower() while PID is stopped)
         //robot.scoop.set(100);
