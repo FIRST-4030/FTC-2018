@@ -28,12 +28,13 @@ public class TeleOpMode extends OpMode {
 
     private final static float SERVO_TIME_SCALAR = 0.00525f;
 
-
+    private final static float SCOOP_SPEED = 25;
 
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
 
+    private float scoopTarget = 0;
 
     @Override
     public void init() {
@@ -143,10 +144,12 @@ public class TeleOpMode extends OpMode {
 
 
         // Scoop
-        float scoop = -gamepad2.right_stick_y * .50f;
+
         //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
-        robot.scoop.setPower(scoop);
+
+        robot.scoop.set((int) robot.scoop.getEncoder() + ((int) (-gamepad2.right_stick_y * SCOOP_SPEED)));
+
         // Example use as PIDMotor (compatible with setPower() while PID is stopped)
         //robot.scoop.set(100);
 
