@@ -65,7 +65,7 @@ public class PIDMotor extends Motor {
         }
     }
 
-    protected void setInitialized() {
+    public void setInitialized() {
         initialized = true;
     }
 

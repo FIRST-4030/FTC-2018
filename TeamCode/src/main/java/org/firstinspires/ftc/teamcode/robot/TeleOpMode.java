@@ -65,6 +65,8 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
+        robot.scoop.setInitialized();
+        robot.scoop.start();
     }
 
     @Override
