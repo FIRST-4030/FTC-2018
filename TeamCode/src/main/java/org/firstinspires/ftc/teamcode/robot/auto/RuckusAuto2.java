@@ -15,8 +15,7 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Sampling - Crater Only", group = "Test")
-@Disabled
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Only Lower Lift", group = "Test")
 public class RuckusAuto2 extends OpMode {
 
     // Auto constants
@@ -200,7 +199,7 @@ public class RuckusAuto2 extends OpMode {
             case PARSE_SAMPLE: // TODO: hey fix the insides of this method
                 //driver = delegateDriver(common.sampling.parse(driver));
                 //gold = common.sampling dot something
-                state = state.next();
+                state = AUTO_STATE.DONE;
                 break;
             case DISMOUNT:
                 if(dismountNeeded) {
