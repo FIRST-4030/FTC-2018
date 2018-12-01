@@ -28,6 +28,8 @@ public class TeleOpMode extends OpMode {
 
     private final static float SERVO_TIME_SCALAR = .004375f;
 
+
+
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
@@ -46,6 +48,8 @@ public class TeleOpMode extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
+        buttons.register("INTAKE-IN", gamepad2, PAD_BUTTON.dpad_down);
+        buttons.register("INTAKE-OUT", gamepad2, PAD_BUTTON.dpad_up);
         buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
 
@@ -116,12 +120,27 @@ public class TeleOpMode extends OpMode {
         robot.arm.setPower(arm);
 
         // Intake
+        /*
         float intake = -gamepad2.left_stick_y;
         if (!HASHTAG_NO_LIMITS) {
             if (robot.intake.getEncoder() >= INTAKE_MAX) intake = Math.min(intake, 0);
             if (robot.intake.getEncoder() <= INTAKE_MIN) intake = Math.max(intake, 0);
         }
         robot.intake.setPower(intake);
+        */
+
+        float intake;
+        if (gamepad2.dpad_down) {
+            intake = -1;
+            if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() <= INTAKE_MIN) intake = 0;
+        } else if (gamepad2.dpad_up){
+            intake = 1;
+            if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() >= INTAKE_MAX) intake = 0;
+        } else {
+            intake = 0;
+        }
+        robot.intake.setPower(intake);
+
 
         // Scoop
         float scoop = -gamepad2.right_stick_y * .50f;
@@ -152,7 +171,7 @@ public class TeleOpMode extends OpMode {
 
         if (buttons.autokey("INTAKE-TURN")) {
 
-            robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * -gamepad2.left_stick_x));
+            robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x));
 
         }
 

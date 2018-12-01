@@ -32,7 +32,7 @@ public class Robot {
     public final Switch armSwitch;
     public final Motor intake;
     public final Switch intakeSwitch;
-    public final Motor scoop;
+    public final PIDMotor scoop;
     public final Gyro gyro;
     public final VuforiaFTC vuforia;
 
