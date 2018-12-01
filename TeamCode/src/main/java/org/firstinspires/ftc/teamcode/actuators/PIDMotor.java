@@ -14,7 +14,7 @@ public class PIDMotor extends Motor {
     private Background background;
     private final PIDMotorConfig config;
     private boolean initialized;
-    private final PID pid;
+    public final PID pid; // sorry private variable!!!
 
     public PIDMotor(HardwareMap map, Telemetry telemetry, PIDMotorConfig config) {
         super(map, telemetry, config);
@@ -65,7 +65,7 @@ public class PIDMotor extends Motor {
         }
     }
 
-    protected void setInitialized() {
+    public void setInitialized() {
         initialized = true;
     }
 
@@ -82,7 +82,7 @@ public class PIDMotor extends Motor {
     }
 
     public void start() {
-        if (!isAvailable()) {
+        if (!pidAvailable()) {
             telemetry.log().add(this.getClass().getSimpleName() + ": Cannot start: " + config.name);
         }
 

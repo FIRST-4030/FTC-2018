@@ -24,11 +24,14 @@ public class TeleOpMode extends OpMode {
     private final static int ARM_MIN = 100;
     private final static int LIFT_MAX = 11222;
     private final static int LIFT_MIN = 0;
-
+    private final static int INTAKE_FINE_MOTOR_CONTROL = 300;
 
     private final static float SERVO_TIME_SCALAR = .004375f;
 
-    private final static float SCOOP_SPEED = 25;
+    private final static float SCOOP_SPEED = 75;
+    // Fine motor control system
+    private float last_goal;
+
 
     // Devices and subsystems
     private Robot robot = null;
@@ -65,6 +68,9 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
+        robot.scoop.setInitialized();
+        robot.scoop.pid.setTarget(robot.scoop.getEncoder());
+        robot.scoop.start();
     }
 
     @Override
@@ -134,7 +140,7 @@ public class TeleOpMode extends OpMode {
         if (gamepad2.dpad_down) {
             intake = -1;
             if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() <= INTAKE_MIN) intake = 0;
-        } else if (gamepad2.dpad_up){
+        } else if (gamepad2.dpad_up) {
             intake = 1;
             if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() >= INTAKE_MAX) intake = 0;
         } else {
@@ -148,7 +154,7 @@ public class TeleOpMode extends OpMode {
         //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
         //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
 
-        robot.scoop.set(robot.scoop.getEncoder() + ((int) (-gamepad2.right_stick_y * SCOOP_SPEED)));
+        robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
 
         // Example use as PIDMotor (compatible with setPower() while PID is stopped)
         //robot.scoop.set(100);
@@ -173,9 +179,16 @@ public class TeleOpMode extends OpMode {
          */
 
         if (buttons.autokey("INTAKE-TURN")) {
+            if (Math.abs(last_goal - robot.intakeTurn.getPosition()) < INTAKE_FINE_MOTOR_CONTROL) {
+                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x * 7));
+            } else {
+                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x));
+            }
 
-            robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x));
+        }
 
+        if (!buttons.autokey("INTAKE-TURN")) {
+            last_goal = robot.intakeTurn.getPosition();
         }
 
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
