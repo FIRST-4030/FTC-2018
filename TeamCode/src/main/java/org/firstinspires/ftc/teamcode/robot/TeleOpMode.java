@@ -29,6 +29,7 @@ public class TeleOpMode extends OpMode {
     private final static float SERVO_TIME_SCALAR = .004375f;
 
     private final static float SCOOP_SPEED = 75;
+
     // Fine motor control system
     private float last_goal;
 
@@ -195,6 +196,8 @@ public class TeleOpMode extends OpMode {
 
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
 
+        // Spin the wheely collector on the code bot
+        //robot.wheelCollector.setPosition(0.125f);
     }
 
     public void stop(){
