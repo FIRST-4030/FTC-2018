@@ -54,7 +54,7 @@ public class Lift implements CommonTask {
                 dismountState = dismountState.next();
                 break;
             case SUPERMAN:
-                driver.drive = robot.common.drive.distance(-1100); //WAHOOOOO
+                driver.drive = robot.common.drive.distance(1100); //WAHOOOOO
                 dismountState = dismountState.next();
                 break;
             case DONE:
