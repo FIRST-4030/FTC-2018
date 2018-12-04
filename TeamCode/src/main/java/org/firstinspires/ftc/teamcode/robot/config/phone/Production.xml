@@ -7,6 +7,7 @@
             <Motor name="Intake" port="2" />
             <Motor name="Scoop" port="3" />
             <Servo name="ArmTurn" port="0" />
+            <Servo name="WheelCollector" port="1" />
             <DigitalDevice name="ArmSwitch" port="1" />
             <DigitalDevice name="IntakeSwitch" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
@@ -16,6 +17,7 @@
             <Motor name="FR" port="1" />
             <Motor name="BL" port="2" />
             <Motor name="BR" port="3" />
+            <Servo name="FlagDropper" port="0" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
