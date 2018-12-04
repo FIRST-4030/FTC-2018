@@ -29,7 +29,7 @@ public class Robot {
     public final Motor arm;
     public final ServoFTC intakeTurn;
     public final ServoFTC flagDropper;
-    public final ServoFTC wheelCollector;
+    public ServoFTC wheelCollector = null;
     public final Switch armSwitch;
     public final Motor intake;
     public final Switch intakeSwitch;
@@ -75,7 +75,8 @@ public class Robot {
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         scoop = pids.init(MOTORS.SCOOP);
         scoop.stop(); // Disable PID mode until we're ready
-        wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
+        if (Robot.robot.bot == BOT.CODE)
+            wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
 
         gyro = gyros.init();
         vuforia = new VuforiaFTC(map, telemetry, bot, "Webcam");

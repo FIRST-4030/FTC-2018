@@ -47,7 +47,7 @@ public class ServoConfigs extends Configs {
                         config = new ServoConfig("FlagDropper", false, 0f, 1f);
                         break;
                     case WHEEL_COLLECTOR:
-                        config = new ServoConfig("fuckfuck", false, -1f, 1f);
+                        config = new ServoConfig("WheelCollector", false, -1f, 1f);
                 }
                 break;
         }
