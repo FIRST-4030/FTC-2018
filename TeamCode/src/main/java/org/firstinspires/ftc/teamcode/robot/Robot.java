@@ -25,13 +25,13 @@ public class Robot {
 
     public final BOT bot;
     public final Wheels wheels;
-    public final Motor lift;
-    public final Motor arm;
+    public final PIDMotor lift;
+    public final PIDMotor arm;
     public final ServoFTC intakeTurn;
     public final ServoFTC flagDropper;
     public ServoFTC wheelCollector = null;
     public final Switch armSwitch;
-    public final Motor intake;
+    public final PIDMotor intake;
     public final Switch intakeSwitch;
     public final PIDMotor scoop;
     public final Gyro gyro;
@@ -63,15 +63,19 @@ public class Robot {
         this.wheels = wheels.init();
         this.wheels.stop();
 
-        lift = motors.init(MOTORS.LIFT);
+        lift = pids.init(MOTORS.LIFT);
         lift.stop();
 
-        arm = motors.init(MOTORS.ARM);
+        arm = pids.init(MOTORS.ARM);
+        arm.stop();
+
         intakeTurn = servos.init(SERVOS.ARM_TURN);
         armSwitch = switches.init(SWITCHES.ARM);
         flagDropper = servos.init(SERVOS.FLAG_DROPPER);
 
-        intake = motors.init(MOTORS.INTAKE);
+        intake = pids.init(MOTORS.INTAKE);
+        intake.stop();
+
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         scoop = pids.init(MOTORS.SCOOP);
         scoop.stop(); // Disable PID mode until we're ready

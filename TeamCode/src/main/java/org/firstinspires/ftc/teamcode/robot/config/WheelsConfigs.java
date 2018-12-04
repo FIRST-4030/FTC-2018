@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.wheels.Wheels;
 public class WheelsConfigs extends Configs {
     private final static float DERATE = 1.0f;
     private final static float WC_MAX_RATE = 2.50f * DERATE;
-    private final static float WC_TICKS_PER_MM = 1.51f;
+    private final static float WC_TICKS_PER_MM = 1.394f;
 
     private final static float M_MAX_RATE = WC_MAX_RATE;
     private final static float M_TICKS_PER_MM = WC_TICKS_PER_MM;
@@ -52,13 +52,13 @@ public class WheelsConfigs extends Configs {
         switch (bot) {
             case PRODUCTION:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, true,
+                motors[0] = new WheelMotor("FL", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Glaen
-                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, true,
+                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, false,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Glick
-                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, false,
+                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Gloin
-                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, false,
+                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); //Gimli::Dad
                 config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, true, DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
