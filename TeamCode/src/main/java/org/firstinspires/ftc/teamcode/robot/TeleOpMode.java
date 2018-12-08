@@ -59,6 +59,7 @@ public class TeleOpMode extends OpMode {
         buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
+        buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
 
         buttons.getListener("INTAKE-TURN").setAutokeyTimeout(25);
 
@@ -199,8 +200,10 @@ public class TeleOpMode extends OpMode {
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
 
         // Spin the wheely collector
-        if (buttons.get("REVERSE-COLLECTOR")) {
-            robot.wheelCollector.setPosition(1-WHEELY_SPEED);
+        if (buttons.held("STOP-COLLECTOR")) {
+            robot.wheelCollector.setPosition(0.5f);
+        } else if (buttons.held("REVERSE-COLLECTOR")) {
+            robot.wheelCollector.setPosition(1 - WHEELY_SPEED);
         } else {
             robot.wheelCollector.setPosition(WHEELY_SPEED);
         }
