@@ -21,6 +21,8 @@ public class Drive implements CommonTask, DriveToListener {
     private static final int TURN_TIMEOUT = (int) (DriveTo.TIMEOUT_DEFAULT * 1.5);
     public static final PIDParams TURN_PARAMS = new PIDParams(0.011f, 0.003f, 0.0f,
             null, true, true);
+    public static final PIDParams TURN_PARAMS_CODE = new PIDParams(0.011f, 0.003f, 0.0f,
+            null, true, true);
 
     // PID Drive
     private static final float DRIVE_TOLERANCE = 100.0f; // Permitted distance error in encoder ticks
@@ -110,7 +112,22 @@ public class Drive implements CommonTask, DriveToListener {
         heading = Heading.normalize(heading);
 
         DriveToParams param = new DriveToParams(this, SENSOR_TYPE.GYROSCOPE);
-        param.rotationPid(heading, TURN_PARAMS, TURN_TOLERANCE, TURN_DIFF_TOLERANCE);
+        PIDParams params = TURN_PARAMS;
+        float tolerance = TURN_TOLERANCE;
+        float diffTolerance = TURN_DIFF_TOLERANCE;
+        switch (robot.bot) {
+            case PRODUCTION:
+                params = TURN_PARAMS;
+                tolerance = TURN_TOLERANCE;
+                diffTolerance = TURN_DIFF_TOLERANCE;
+                break;
+            case CODE:
+                params = TURN_PARAMS_CODE;
+                tolerance = TURN_TOLERANCE;
+                diffTolerance = TURN_DIFF_TOLERANCE;
+                break;
+        }
+        param.rotationPid(heading, params, tolerance, diffTolerance);
         param.timeout = TURN_TIMEOUT; // Allow extra time for turns to settle (we expect them to overshoot)
         return new DriveTo(new DriveToParams[]{param});
     }
