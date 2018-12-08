@@ -79,8 +79,7 @@ public class Robot {
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         scoop = pids.init(MOTORS.SCOOP);
         scoop.stop(); // Disable PID mode until we're ready
-        if (Robot.robot.bot == BOT.CODE)
-            wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
+        wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
 
         gyro = gyros.init();
         vuforia = new VuforiaFTC(map, telemetry, bot, "Webcam");

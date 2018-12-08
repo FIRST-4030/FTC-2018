@@ -15,6 +15,7 @@ public class TeleOpMode extends OpMode {
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
+    private final static float WHEELY_SPEED = 0.125f;
 
     private final static int SCOOP_MAX = 100; //TODO: get a real number
     private final static int SCOOP_MIN = 0;
@@ -57,6 +58,7 @@ public class TeleOpMode extends OpMode {
         buttons.register("INTAKE-OUT", gamepad2, PAD_BUTTON.dpad_up);
         buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
+        buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
 
         buttons.getListener("INTAKE-TURN").setAutokeyTimeout(25);
 
@@ -196,8 +198,13 @@ public class TeleOpMode extends OpMode {
 
         // getPosition() will never exceed the servo's configured limits, so this can't run too far
 
-        // Spin the wheely collector on the code bot
-        //robot.wheelCollector.setPosition(0.125f);
+        // Spin the wheely collector
+        if (buttons.get("REVERSE-COLLECTOR")) {
+            robot.wheelCollector.setPosition(1-WHEELY_SPEED);
+        } else {
+            robot.wheelCollector.setPosition(WHEELY_SPEED);
+        }
+
     }
 
     public void stop(){
