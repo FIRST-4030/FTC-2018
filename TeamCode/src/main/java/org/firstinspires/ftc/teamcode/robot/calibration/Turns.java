@@ -39,7 +39,7 @@ public class Turns extends Subsystem {
         buttons.spinners.add(INCREMENT,
                 opmode.gamepad1, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
                 Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
+                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d));
         buttons.spinners.setLimit(INCREMENT, MIN_INCREMENT, false);
         buttons.spinners.setLimit(INCREMENT, MAX_INCREMENT, true);
 
