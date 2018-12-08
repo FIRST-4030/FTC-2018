@@ -15,7 +15,7 @@ public class TeleOpMode extends OpMode {
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
-    private final static float WHEELY_SPEED = 0.125f;
+    private final static float WHEELY_SPEED = 0.000f;
 
     private final static int SCOOP_MAX = 100; //TODO: get a real number
     private final static int SCOOP_MIN = 0;

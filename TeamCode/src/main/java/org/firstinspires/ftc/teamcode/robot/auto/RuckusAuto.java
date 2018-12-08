@@ -103,8 +103,8 @@ public class RuckusAuto extends OpMode {
         // Detailed feedback
         telemetry.addData("\t\t\t", "");
         telemetry.addData("Gyro", robot.gyro.isReady() ? "Ready" : "Calibrating…");
-
         // Update
+
         telemetry.update();
     }
 
@@ -252,6 +252,7 @@ public class RuckusAuto extends OpMode {
                 state = state.next();
                 break;
             case DROP_FLAG:
+                robot.flagDropper.setPosition(15);
                 state = state.next();
                 break;
             case PARK:
