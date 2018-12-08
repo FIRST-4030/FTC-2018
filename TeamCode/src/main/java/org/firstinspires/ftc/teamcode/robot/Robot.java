@@ -72,13 +72,11 @@ public class Robot {
 
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         intake = pids.init(MOTORS.INTAKE);
-        intake.stop();
+        intake.init();
         intakeTurn = servos.init(SERVOS.ARM_TURN);
 
         scoop = pids.init(MOTORS.SCOOP);
-        scoop.setInitialized();
-        scoop.start();
-        scoop.set(scoop.getEncoder());
+        scoop.init();
 
         flagDropper = servos.init(SERVOS.FLAG_DROPPER);
         wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);

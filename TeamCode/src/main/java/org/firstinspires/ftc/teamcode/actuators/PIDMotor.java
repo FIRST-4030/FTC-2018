@@ -24,6 +24,12 @@ public class PIDMotor extends Motor {
         pid = new PID(config.pid);
     }
 
+    public void init() {
+        setInitialized();
+        pid.setTarget(getEncoder());
+        start();
+    }
+
     // Generic implementation for a switch-based reset, can be overridden
     public boolean init(Switch button, float speed) {
         // Don't re-init unless someone clears initialized
@@ -52,11 +58,7 @@ public class PIDMotor extends Motor {
         stop();
 
         // Finalized
-        setInitialized();
-        pid.setTarget(config.min);
-
-        // Run in another thread
-        start();
+        init();
         return true;
     }
 
