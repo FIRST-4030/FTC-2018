@@ -16,7 +16,7 @@ public class Distance extends Subsystem {
     private static final String P = "DRIVE_P";
     private static final String I = "DRIVE_I";
     private static final String INCREMENT = "DRIVE-INCREMENT";
-    private static final float MIN_INCREMENT = 0.001f;
+    private static final float MIN_INCREMENT = 0.0001f;
     private static final float MAX_INCREMENT = 0.1f;
 
     private static final String JOYSTICK = "JOYSTICK";
@@ -39,17 +39,17 @@ public class Distance extends Subsystem {
     protected void load() {
         buttons.spinners.add(INCREMENT,
                 opmode.gamepad1, PAD_BUTTON.right_bumper, PAD_BUTTON.left_bumper,
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 100.0d),
-                Round.magnitudeValue(Drive.TURN_PARAMS.P / 10.0d));
+                Round.magnitudeValue(Drive.DRIVE_PARAMS.P / 100.0d),
+                Round.magnitudeValue(Drive.DRIVE_PARAMS.I / 10.0d));
         buttons.spinners.setLimit(INCREMENT, MIN_INCREMENT, false);
         buttons.spinners.setLimit(INCREMENT, MAX_INCREMENT, true);
 
         buttons.spinners.add(P,
                 opmode.gamepad1, PAD_BUTTON.dpad_up, PAD_BUTTON.dpad_down,
-                INCREMENT, Drive.TURN_PARAMS.P);
+                INCREMENT, Drive.DRIVE_PARAMS.P);
         buttons.spinners.add(I,
                 opmode.gamepad1, PAD_BUTTON.dpad_right, PAD_BUTTON.dpad_left,
-                INCREMENT, Drive.TURN_PARAMS.I);
+                INCREMENT, Drive.DRIVE_PARAMS.I);
 
         buttons.register(TINY, opmode.gamepad1, PAD_BUTTON.a);
         buttons.register(SMALL, opmode.gamepad1, PAD_BUTTON.x);
