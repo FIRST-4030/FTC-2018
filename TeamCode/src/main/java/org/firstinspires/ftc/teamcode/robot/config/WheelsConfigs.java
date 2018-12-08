@@ -64,13 +64,13 @@ public class WheelsConfigs extends Configs {
                 break;
             case CODE:
                 motors = new WheelMotor[4];
-                motors[0] = new WheelMotor("FL_Code", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, true,
+                motors[0] = new WheelMotor("FL_Code", MOTOR_SIDE.LEFT, MOTOR_END.FRONT, false,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Glaen
-                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, true,
+                motors[1] = new WheelMotor("BL", MOTOR_SIDE.LEFT, MOTOR_END.BACK, false,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Glick
-                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, false,
+                motors[2] = new WheelMotor("FR", MOTOR_SIDE.RIGHT, MOTOR_END.FRONT, true,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); // Gimli::Gloin
-                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, false,
+                motors[3] = new WheelMotor("BR", MOTOR_SIDE.RIGHT, MOTOR_END.BACK, true,
                         new PIDParams(), M_TICKS_PER_MM, M_MAX_RATE); //Gimli::Dad
                 config = new WheelsConfig(DRIVE_TYPE.MECANUM, motors, true, DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
