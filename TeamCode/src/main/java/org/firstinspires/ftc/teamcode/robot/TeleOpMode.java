@@ -74,8 +74,6 @@ public class TeleOpMode extends OpMode {
 
     @Override
     public void init_loop() {
-        robot.arm.init(robot.armSwitch, -0.5f);
-        // robot.intake.init(robot.intakeSwitch, 0.5f);
     }
 
     @Override
