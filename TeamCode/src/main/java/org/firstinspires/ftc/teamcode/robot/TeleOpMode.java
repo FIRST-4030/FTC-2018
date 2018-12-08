@@ -15,10 +15,12 @@ public class TeleOpMode extends OpMode {
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
+    private final static int SCOOP_MIN = 0;
+    private final static int SCOOP_EXTEND = 1200;
+    private final static int SCOOP_MAX = SCOOP_EXTEND + 300;
+    private final static int SCOOP_INCREMENT = 10;
     private final static float WHEELY_SPEED = 0.000f;
 
-    private final static int SCOOP_MAX = 100; //TODO: get a real number
-    private final static int SCOOP_MIN = 0;
     private final static int INTAKE_MAX = 4570;
     private final static int INTAKE_MIN = 100;
     private final static int ARM_MAX = 8000;
@@ -29,8 +31,6 @@ public class TeleOpMode extends OpMode {
 
     private final static float SERVO_TIME_SCALAR = .004375f;
 
-    private final static float SCOOP_SPEED = 75;
-
     // Fine motor control system
     private float last_goal;
 
@@ -38,8 +38,6 @@ public class TeleOpMode extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
-
-    private float scoopTarget = 0;
 
     @Override
     public void init() {
@@ -60,6 +58,10 @@ public class TeleOpMode extends OpMode {
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
         buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
+        buttons.register("SCOOP_RETURN", gamepad2, PAD_BUTTON.left_stick_button);
+        buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
+        buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_left);
+        buttons.register("SCOOP_UP", gamepad2, PAD_BUTTON.dpad_right);
 
         buttons.getListener("INTAKE-TURN").setAutokeyTimeout(25);
 
@@ -72,9 +74,6 @@ public class TeleOpMode extends OpMode {
     @Override
     public void start() {
         robot.wheels.setTeleop(true);
-        //robot.scoop.setInitialized();
-        //robot.scoop.pid.setTarget(robot.scoop.getEncoder());
-        //robot.scoop.start();
     }
 
     @Override
@@ -154,16 +153,24 @@ public class TeleOpMode extends OpMode {
 
 
         // Scoop
-
-        //if(robot.scoop.getEncoder() >= SCOOP_MAX) scoop = Math.min(scoop, 0);
-        //if(robot.scoop.getEncoder() <= SCOOP_MIN) scoop = Math.max(scoop, 0);
-
-        //robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
-
-        robot.scoop.setPower(-gamepad2.right_stick_y * .50f);
-
-        // Example use as PIDMotor (compatible with setPower() while PID is stopped)
-        //robot.scoop.set(100);
+        if (buttons.get("SCOOP_RETURN")) {
+            robot.scoop.set(SCOOP_MIN);
+        } else if (buttons.get("SCOOP_EXTEND")) {
+            robot.scoop.set(SCOOP_EXTEND);
+        } else {
+            int current = robot.scoop.getEncoder();
+            int target = current;
+            if (buttons.get("SCOOP_DOWN")) {
+                target += SCOOP_INCREMENT;
+                target = Math.max(target, SCOOP_MAX);
+            } else if (buttons.get("SCOOP_UP")) {
+                target -= SCOOP_INCREMENT;
+                target = Math.min(target, SCOOP_MIN);
+            }
+            if (target != current) {
+                robot.scoop.set(target);
+            }
+        }
 
         // Intake Turn
         /*
@@ -210,7 +217,7 @@ public class TeleOpMode extends OpMode {
 
     }
 
-    public void stop(){
+    public void stop() {
         robot.scoop.stop();
     }
 }

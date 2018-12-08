@@ -66,19 +66,21 @@ public class Robot {
         lift = pids.init(MOTORS.LIFT);
         lift.stop();
 
+        armSwitch = switches.init(SWITCHES.ARM);
         arm = pids.init(MOTORS.ARM);
         arm.stop();
 
-        intakeTurn = servos.init(SERVOS.ARM_TURN);
-        armSwitch = switches.init(SWITCHES.ARM);
-        flagDropper = servos.init(SERVOS.FLAG_DROPPER);
-
+        intakeSwitch = switches.init(SWITCHES.INTAKE);
         intake = pids.init(MOTORS.INTAKE);
         intake.stop();
+        intakeTurn = servos.init(SERVOS.ARM_TURN);
 
-        intakeSwitch = switches.init(SWITCHES.INTAKE);
         scoop = pids.init(MOTORS.SCOOP);
-        scoop.stop(); // Disable PID mode until we're ready
+        scoop.setInitialized();
+        scoop.start();
+        scoop.pid.setTarget(robot.scoop.getEncoder());
+
+        flagDropper = servos.init(SERVOS.FLAG_DROPPER);
         wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
 
         gyro = gyros.init();
