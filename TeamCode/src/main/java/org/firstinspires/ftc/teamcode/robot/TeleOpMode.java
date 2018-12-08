@@ -58,6 +58,7 @@ public class TeleOpMode extends OpMode {
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
         buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
+        buttons.register("RETURN-COLLECTOR", gamepad2, PAD_BUTTON.x); // rebind this when charlie loses the big dum
         buttons.register("SCOOP_RETURN", gamepad2, PAD_BUTTON.left_stick_button);
         buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
         buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_left);
@@ -69,6 +70,12 @@ public class TeleOpMode extends OpMode {
         telemetry.addData(">", "Ready for game start");
         telemetry.update();
 
+    }
+
+    @Override
+    public void init_loop() {
+        robot.arm.init(robot.armSwitch, -0.5f);
+        // robot.intake.init(robot.intakeSwitch, 0.5f);
     }
 
     @Override
@@ -213,6 +220,12 @@ public class TeleOpMode extends OpMode {
             robot.wheelCollector.setPosition(1 - WHEELY_SPEED);
         } else {
             robot.wheelCollector.setPosition(WHEELY_SPEED);
+        }
+
+        // Auto collector return
+        if (buttons.get("RETURN-COLLECTOR")) {
+            robot.intake.set(0);
+            robot.scoop.set(0);
         }
 
     }

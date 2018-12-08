@@ -46,7 +46,7 @@ public class PIDMotorConfigs extends Configs {
                         break;
                     case ARM:
                         MotorConfig m3 = new MotorConfig("Arm", true);
-                        config = new PIDMotorConfig(m3, new PIDParams(.003f, 0.00001f, 0f), -8000, 8000);
+                        config = new PIDMotorConfig(m3, new PIDParams(.003f, 0.00001f, 0f), 0, 8000);
                         break;
                     case INTAKE:
                         MotorConfig m4 = new MotorConfig("Intake", true);
