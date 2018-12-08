@@ -36,6 +36,8 @@ public class ServoConfigs extends Configs {
                     case FLAG_DROPPER:
                         config = new ServoConfig("FlagDropper", false, 0f, 1f);
                         break;
+                    case WHEEL_COLLECTOR:
+                        config = new ServoConfig("WheelCollector", false, 0f, 1f);
                 }
                 break;
         }

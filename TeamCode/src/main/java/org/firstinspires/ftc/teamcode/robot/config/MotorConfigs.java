@@ -30,6 +30,8 @@ public class MotorConfigs extends Configs {
         MotorConfig config = null;
         switch (bot) {
 
+            // IMPORTANT: If you need to change the *names* of the motors here, change them in MotorConfigs too
+
             case PRODUCTION: case CODE:
                 switch (motor) {
                     case LIFT:
