@@ -66,10 +66,12 @@ public class Robot {
         lift = pids.init(MOTORS.LIFT);
         lift.stop();
 
+        // Init Arm
         armSwitch = switches.init(SWITCHES.ARM);
         arm = pids.init(MOTORS.ARM);
         arm.stop();
 
+        // Init Intake
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         intake = pids.init(MOTORS.INTAKE);
         intake.stop();
