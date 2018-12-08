@@ -78,7 +78,7 @@ public class Robot {
         scoop = pids.init(MOTORS.SCOOP);
         scoop.setInitialized();
         scoop.start();
-        scoop.pid.setTarget(robot.scoop.getEncoder());
+        scoop.set(scoop.getEncoder());
 
         flagDropper = servos.init(SERVOS.FLAG_DROPPER);
         wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);
