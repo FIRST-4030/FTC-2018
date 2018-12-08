@@ -14,6 +14,7 @@ public class PIDMotor extends Motor {
     private Background background;
     private final PIDMotorConfig config;
     private boolean initialized;
+    private long timeout = 0;
     public final PID pid; // sorry private variable!!!
 
     public PIDMotor(HardwareMap map, Telemetry telemetry, PIDMotorConfig config) {
@@ -24,20 +25,26 @@ public class PIDMotor extends Motor {
     }
 
     // Generic implementation for a switch-based reset, can be overridden
-    public void init(Switch button, float speed) {
-        long end = System.currentTimeMillis() + TIMEOUT;
+    public boolean init(Switch button, float speed) {
+        // Don't re-init unless someone clears initialized
+        if (pidAvailable()) {
+            return true;
+        }
 
-        // Until the button goes down
-        while (!button.get()) {
-            // Run as directed
+        // Timeout for safety
+        if (timeout == 0) {
+            timeout = System.currentTimeMillis() + TIMEOUT;
+        }
+        if (System.currentTimeMillis() > timeout) {
+            stop();
+            telemetry.log().add(this.getClass().getSimpleName() + ": Init timeout: " + config.name);
+            return false;
+        }
+
+        // If we're not at 0, run as directed
+        if (!button.get()) {
             motor.setPower(speed);
-
-            // Timeout for safety
-            if (System.currentTimeMillis() > end) {
-                stop();
-                telemetry.log().add(this.getClass().getSimpleName() + ": Init timeout: " + config.name);
-                return;
-            }
+            return false;
         }
 
         // Stop and set our zero point
@@ -50,6 +57,7 @@ public class PIDMotor extends Motor {
 
         // Run in another thread
         start();
+        return true;
     }
 
     private void loop() {
