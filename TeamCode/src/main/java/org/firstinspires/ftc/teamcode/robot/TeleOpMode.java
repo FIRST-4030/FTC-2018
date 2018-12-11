@@ -11,15 +11,20 @@ public class TeleOpMode extends OpMode {
 
     private boolean DEBUG = true;
     private boolean HASHTAG_NO_LIMITS = true;
+    private boolean returning = false;
 
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
+    // Unused? vvv
     private final static int SCOOP_MIN = 0;
     private final static int SCOOP_EXTEND = 1200;
     private final static int SCOOP_MAX = SCOOP_EXTEND + 300;
     private final static int SCOOP_INCREMENT = 10;
+    // Unused? ^^^
+    private final static int SCOOP_SPEED = 75;
     private final static float WHEELY_SPEED = 0.000f;
+    private final static int INTAKE_SPEED = 1;
 
     private final static int INTAKE_MAX = 4570;
     private final static int INTAKE_MIN = 100;
@@ -58,7 +63,7 @@ public class TeleOpMode extends OpMode {
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
         buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
-        buttons.register("RETURN-COLLECTOR", gamepad2, PAD_BUTTON.x); // rebind this when charlie loses the big dum
+        buttons.register("RETURN-COLLECTOR", gamepad2, PAD_BUTTON.x);
         buttons.register("SCOOP_RETURN", gamepad2, PAD_BUTTON.left_stick_button);
         buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
         buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_left);
@@ -146,10 +151,10 @@ public class TeleOpMode extends OpMode {
 
         float intake;
         if (gamepad2.dpad_down) {
-            intake = -1;
+            intake = -INTAKE_SPEED;
             if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() <= INTAKE_MIN) intake = 0;
         } else if (gamepad2.dpad_up) {
-            intake = 1;
+            intake = INTAKE_SPEED;
             if (!HASHTAG_NO_LIMITS && robot.intake.getEncoder() >= INTAKE_MAX) intake = 0;
         } else {
             intake = 0;
@@ -158,6 +163,7 @@ public class TeleOpMode extends OpMode {
 
 
         // Scoop
+    /*
         if (buttons.get("SCOOP_RETURN")) {
             robot.scoop.set(SCOOP_MIN);
         } else if (buttons.get("SCOOP_EXTEND")) {
@@ -175,7 +181,12 @@ public class TeleOpMode extends OpMode {
             if (target != current) {
                 robot.scoop.set(target);
             }
-        }
+        }*/
+        robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
+        if (buttons.get("SCOOP_UP"))
+            robot.scoop.set(0);
+        if (buttons.get("SCOOP_DOWN"))
+            robot.scoop.set(200); // TODO: CHANGE thIS
 
         // Intake Turn
         /*
@@ -220,15 +231,21 @@ public class TeleOpMode extends OpMode {
             robot.wheelCollector.setPosition(WHEELY_SPEED);
         }
 
-        // Auto collector return
+        // Auto Collector Return
         if (buttons.get("RETURN-COLLECTOR")) {
-            robot.intake.set(0);
+            //returning = true;
+            //robot.intake.setPower(-0.125f);
             robot.scoop.set(0);
         }
-
+        /*if (robot.intakeSwitch.get() && !returning) {
+            returning = false;
+            robot.intake.setPower(0f);
+        }*/
     }
 
     public void stop() {
         robot.scoop.stop();
+        robot.intake.stop();
+        robot.arm.stop();
     }
 }
