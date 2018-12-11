@@ -25,7 +25,7 @@ public class Robot {
 
     public final BOT bot;
     public final Wheels wheels;
-    public final PIDMotor lift;
+    public final Motor lift;
     public final PIDMotor arm;
     public final ServoFTC intakeTurn;
     public final ServoFTC flagDropper;
@@ -63,7 +63,7 @@ public class Robot {
         this.wheels = wheels.init();
         this.wheels.stop();
 
-        lift = pids.init(MOTORS.LIFT);
+        lift = motors.init(MOTORS.LIFT);
         lift.stop();
 
         // Init Arm
