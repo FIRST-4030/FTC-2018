@@ -75,6 +75,7 @@ public class Robot {
         intakeSwitch = switches.init(SWITCHES.INTAKE);
         intake = pids.init(MOTORS.INTAKE);
         intake.init();
+        intake.stop();
         intakeTurn = servos.init(SERVOS.ARM_TURN);
 
         scoop = pids.init(MOTORS.SCOOP);

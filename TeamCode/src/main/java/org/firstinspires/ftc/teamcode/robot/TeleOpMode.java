@@ -9,36 +9,37 @@ import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 public class TeleOpMode extends OpMode {
 
+    // Configuration
     private boolean DEBUG = true;
     private boolean HASHTAG_NO_LIMITS = true;
-    private boolean returning = false;
 
     // Drive speeds
     private final static float SCALE_FULL = 1.0f;
     private final static float SCALE_SLOW = SCALE_FULL * 0.5f;
-    // Unused? vvv
-    private final static int SCOOP_MIN = 0;
-    private final static int SCOOP_EXTEND = 1200;
-    private final static int SCOOP_MAX = SCOOP_EXTEND + 300;
-    private final static int SCOOP_INCREMENT = 10;
-    // Unused? ^^^
-    private final static int SCOOP_SPEED = 75;
-    private final static float WHEELY_SPEED = 0.000f;
+    private final static int SCOOP_SPEED = 70;
+    private final static float WHEELY_SPEED = 0.0f;
     private final static int INTAKE_SPEED = 1;
 
+    // Limits
     private final static int INTAKE_MAX = 4570;
     private final static int INTAKE_MIN = 100;
     private final static int ARM_MAX = 8000;
     private final static int ARM_MIN = 100;
     private final static int LIFT_MAX = 11222;
     private final static int LIFT_MIN = 0;
-    private final static int INTAKE_FINE_MOTOR_CONTROL = 300;
+    private final static int SCOOP_UP = 50;
+    private final static int SCOOP_DOWN = 1150;
 
+    // Potentially Unused
+    private final static int SCOOP_MIN = 0;
+    private final static int SCOOP_EXTEND = 1200;
+    private final static int SCOOP_MAX = SCOOP_EXTEND + 300;
+    private final static int SCOOP_INCREMENT = 10;
+    private final static int INTAKE_FINE_MOTOR_CONTROL = 300;
     private final static float SERVO_TIME_SCALAR = .004375f;
 
     // Fine motor control system
     private float last_goal;
-
 
     // Devices and subsystems
     private Robot robot = null;
@@ -54,22 +55,17 @@ public class TeleOpMode extends OpMode {
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
 
-
         // Register buttons
         buttons = new ButtonHandler(robot);
         buttons.register("INTAKE-IN", gamepad2, PAD_BUTTON.dpad_down);
         buttons.register("INTAKE-OUT", gamepad2, PAD_BUTTON.dpad_up);
-        buttons.register("INTAKE-TURN", gamepad2, PAD_BUTTON.left_stick_x);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
         buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
-        buttons.register("RETURN-COLLECTOR", gamepad2, PAD_BUTTON.x);
         buttons.register("SCOOP_RETURN", gamepad2, PAD_BUTTON.left_stick_button);
         buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
-        buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_left);
-        buttons.register("SCOOP_UP", gamepad2, PAD_BUTTON.dpad_right);
-
-        buttons.getListener("INTAKE-TURN").setAutokeyTimeout(25);
+        buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_right);
+        buttons.register("SCOOP_UP", gamepad2, PAD_BUTTON.dpad_left);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -105,7 +101,6 @@ public class TeleOpMode extends OpMode {
         if (DEBUG) telemetry.addData("Arm Encoder", robot.arm.getEncoder());
         if (DEBUG) telemetry.addData("Intake Encoder", robot.intake.getEncoder());
         if (DEBUG) telemetry.addData("Scoop Encoder", robot.scoop.getEncoder());
-        if (DEBUG) telemetry.addData("Turn Index", robot.intakeTurn.getPosition());
 
         telemetry.update();
     }
@@ -121,7 +116,9 @@ public class TeleOpMode extends OpMode {
 
     public void liftSystem() {
 
-        // Lift
+        // +------+
+        // | Lift |
+        // +------+
         float liftPower = 0;
         if (gamepad1.left_bumper && !gamepad1.right_bumper) liftPower = -1;
         if (!gamepad1.left_bumper && gamepad1.right_bumper) liftPower = 1;
@@ -131,7 +128,9 @@ public class TeleOpMode extends OpMode {
         }
         robot.lift.setPower(liftPower);
 
-        // Arm
+        // +-----+
+        // | Arm |
+        // +-----+
         float arm = gamepad1.right_trigger - gamepad1.left_trigger;
         if (!HASHTAG_NO_LIMITS) {
             if (robot.arm.getEncoder() >= ARM_MAX) arm = Math.min(arm, 0);
@@ -139,7 +138,11 @@ public class TeleOpMode extends OpMode {
         }
         robot.arm.setPower(arm);
 
-        // Intake
+        // +--------+
+        // | Intake |
+        // +--------+
+
+        // Left Stick Y Controls
         /*
         float intake = -gamepad2.left_stick_y;
         if (!HASHTAG_NO_LIMITS) {
@@ -149,6 +152,7 @@ public class TeleOpMode extends OpMode {
         robot.intake.setPower(intake);
         */
 
+        // Dpad controls
         float intake;
         if (gamepad2.dpad_down) {
             intake = -INTAKE_SPEED;
@@ -161,9 +165,10 @@ public class TeleOpMode extends OpMode {
         }
         robot.intake.setPower(intake);
 
-
-        // Scoop
-    /*
+        // +-------+
+        // | Scoop |
+        // +-------+
+        /*
         if (buttons.get("SCOOP_RETURN")) {
             robot.scoop.set(SCOOP_MIN);
         } else if (buttons.get("SCOOP_EXTEND")) {
@@ -184,45 +189,13 @@ public class TeleOpMode extends OpMode {
         }*/
         robot.scoop.set((int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED)));
         if (buttons.get("SCOOP_UP"))
-            robot.scoop.set(0);
+            robot.scoop.set(SCOOP_UP);
         if (buttons.get("SCOOP_DOWN"))
-            robot.scoop.set(200); // TODO: CHANGE thIS
+            robot.scoop.set(SCOOP_DOWN);
 
-        // Intake Turn
-        /*
-         * This might be a good use for d-pad left/right with autokey, since there is no analog control
-         * If the intake arm is converted to PIDMotor the d-pad up/down would make sense there too
-         *
-         * Autokey example:
-         * buttons.register("INTAKE_LEFT", gamepad2, PAD_BUTTON.dpad_left);
-         * buttons.register("INTAKE_RIGHT", gamepad2, PAD_BUTTON.dpad_right);
-         * if (buttons.autokey("INTAKE_LEFT")) {
-         *     robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + CONSTANT);
-         * } else if (buttons.autokey("INTAKE_RIGHT")) {
-         *     robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() - CONSTANT);
-         * }
-         *
-         * You can adjust delay between autokey presses for each individual button like this:
-         *     buttons.getListener("INTAKE_LEFT").setAutokeyTimeout(500);
-         * Or globally in buttons/Button.java::AUTOKEY_TIMEOUT
-         */
-
-        if (buttons.autokey("INTAKE-TURN")) {
-            if (Math.abs(last_goal - robot.intakeTurn.getPosition()) < INTAKE_FINE_MOTOR_CONTROL) {
-                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x * 7));
-            } else {
-                robot.intakeTurn.setPosition(robot.intakeTurn.getPosition() + (SERVO_TIME_SCALAR * gamepad2.left_stick_x));
-            }
-
-        }
-
-        if (!buttons.autokey("INTAKE-TURN")) {
-            last_goal = robot.intakeTurn.getPosition();
-        }
-
-        // getPosition() will never exceed the servo's configured limits, so this can't run too far
-
-        // Spin the wheely collector
+        // +----------------------+
+        // | Continuous Collector |
+        // +----------------------+
         if (buttons.held("STOP-COLLECTOR")) {
             robot.wheelCollector.setPosition(0.5f);
         } else if (buttons.held("REVERSE-COLLECTOR")) {
@@ -231,16 +204,6 @@ public class TeleOpMode extends OpMode {
             robot.wheelCollector.setPosition(WHEELY_SPEED);
         }
 
-        // Auto Collector Return
-        if (buttons.get("RETURN-COLLECTOR")) {
-            //returning = true;
-            //robot.intake.setPower(-0.125f);
-            robot.scoop.set(0);
-        }
-        /*if (robot.intakeSwitch.get() && !returning) {
-            returning = false;
-            robot.intake.setPower(0f);
-        }*/
     }
 
     public void stop() {
