@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
-import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
+import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
-public class TeleOpMode extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp - Direct Scoop")
+public class TeleOpDirectScoop extends OpMode {
 
     // Configuration
     private boolean DEBUG = true;
@@ -44,7 +44,6 @@ public class TeleOpMode extends OpMode {
     // Devices and subsystems
     private Robot robot = null;
     private ButtonHandler buttons;
-    private int scoopTarget;
 
     @Override
     public void init() {
@@ -102,7 +101,6 @@ public class TeleOpMode extends OpMode {
         if (DEBUG) telemetry.addData("Arm Encoder", robot.arm.getEncoder());
         if (DEBUG) telemetry.addData("Intake Encoder", robot.intake.getEncoder());
         if (DEBUG) telemetry.addData("Scoop Encoder", robot.scoop.getEncoder());
-        if (DEBUG) telemetry.addData("Scoop Target", scoopTarget);
 
         telemetry.update();
     }
@@ -170,32 +168,7 @@ public class TeleOpMode extends OpMode {
         // +-------+
         // | Scoop |
         // +-------+
-        /*
-        if (buttons.get("SCOOP_RETURN")) {
-            robot.scoop.set(SCOOP_MIN);
-        } else if (buttons.get("SCOOP_EXTEND")) {
-            robot.scoop.set(SCOOP_EXTEND);
-        } else {
-            int current = robot.scoop.getEncoder();
-            int target = current;
-            if (buttons.get("SCOOP_DOWN")) {
-                target += SCOOP_INCREMENT;
-                target = Math.max(target, SCOOP_MAX);
-            } else if (buttons.get("SCOOP_UP")) {
-                target -= SCOOP_INCREMENT;
-                target = Math.min(target, SCOOP_MIN);
-            }
-            if (target != current) {
-                robot.scoop.set(target);
-            }
-        }*/
-
-        scoopTarget = (int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED));
-        robot.scoop.set(scoopTarget);
-        if (buttons.get("SCOOP_UP"))
-            robot.scoop.set(SCOOP_UP);
-        if (buttons.get("SCOOP_DOWN"))
-            robot.scoop.set(SCOOP_DOWN);
+        robot.scoop.setPower(-gamepad2.right_stick_y * .50f);
 
         // +----------------------+
         // | Continuous Collector |
