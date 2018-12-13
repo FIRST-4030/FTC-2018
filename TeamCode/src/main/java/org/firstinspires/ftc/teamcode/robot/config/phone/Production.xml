@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
+    <Webcam name="Webcam" serialNumber="A5BEDA6E" />
     <LynxUsbDevice name="Gimli Son of Dad" serialNumber="DQ2AXS26" parentModuleAddress="1">
         <LynxModule name="Lift Hub" port="2">
             <Motor name="Lift" port="0" />

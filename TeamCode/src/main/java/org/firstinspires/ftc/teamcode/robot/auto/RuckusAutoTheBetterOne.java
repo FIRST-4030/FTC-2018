@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.driveto.AutoDriver;
@@ -13,6 +18,12 @@ import org.firstinspires.ftc.teamcode.utils.OrderedEnum;
 import org.firstinspires.ftc.teamcode.utils.OrderedEnumHelper;
 import org.firstinspires.ftc.teamcode.utils.Round;
 import org.firstinspires.ftc.teamcode.vuforia.VuforiaFTC;
+
+import java.util.List;
+
+// +------------------------------------------------------+
+// | TODO: clear up Sampling and put the tfod stuff in it |
+// +------------------------------------------------------+
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DO DA THINGS", group = "Test")
 public class RuckusAutoTheBetterOne extends OpMode {
@@ -48,6 +59,13 @@ public class RuckusAutoTheBetterOne extends OpMode {
     private int[] parkSamePos; //pos for parking in the same color crater
     private int[] parkDifferentPos;
 
+    // Patchwork in the tfod stuff
+    private TFObjectDetector tfod;
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
+    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
+
+
     @Override
     public void init() {
         telemetry.addData(">", "Init…");
@@ -61,6 +79,8 @@ public class RuckusAutoTheBetterOne extends OpMode {
         // Init the camera system
         vuforia.start();
         vuforia.enableCapture();
+
+        initTfod();
 
         // Register buttons
         buttons = new ButtonHandler(robot);
@@ -123,6 +143,8 @@ public class RuckusAutoTheBetterOne extends OpMode {
         robot.vuforia.start();
         robot.vuforia.enableCapture();
 
+        tfod.activate();
+
         if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45 - 90);
         if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45);
         if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 180);
@@ -164,12 +186,12 @@ public class RuckusAutoTheBetterOne extends OpMode {
         driver = common.drive.loop(driver);
 
         // Update our location and target info
-        robot.vuforia.track();
+//        robot.vuforia.track();
 
         // Debug feedback
         telemetry.addData("State", state);
         telemetry.addData("Running", driver.isRunning(time));
-        telemetry.addData("Pivot CCW", common.sampling.getImage() != null ? common.sampling.pivotCCW(alliance) : "<No Image>");
+        telemetry.addData("Gold Pos", gold);
         telemetry.addData("Gyro", Round.truncate(robot.gyro.getHeading()));
         telemetry.addData("Encoder", robot.wheels.getEncoder());
         telemetry.update();
@@ -195,9 +217,9 @@ public class RuckusAutoTheBetterOne extends OpMode {
                     state = state.next();
                 }
                 break;
-            case PARSE_SAMPLE: // TODO: hey fix the insides of this method
-                //driver = delegateDriver(common.sampling.parse(driver));
-                //gold = common.sampling dot something
+            case PARSE_SAMPLE:
+                GOLD_POS pos = parseGoldPos();
+                if(pos != null) gold = pos;
                 state = state.next();
                 break;
             case DISMOUNT:
@@ -213,7 +235,7 @@ public class RuckusAutoTheBetterOne extends OpMode {
                 state = state.next();
                 break;
             case DRIVE_THROUGH:
-                driver.drive = common.drive.distance(300);
+                driver.drive = common.drive.distance(600);
                 state = state.next();
                 break;
             case DONE:
@@ -261,6 +283,15 @@ public class RuckusAutoTheBetterOne extends OpMode {
         GOLD_POS(int angleOffset, int dist) {
             this.angleOffset = angleOffset;
             this.dist = dist;
+        }
+
+        public String toString(){
+            switch (this) {
+                case LEFT: return "Left";
+                case RIGHT: return "Right";
+                case CENTER: return "Center";
+            }
+            return "uh oh! Something went very, very, wrong";
         }
 
     }
@@ -327,6 +358,68 @@ public class RuckusAutoTheBetterOne extends OpMode {
                 returnLeft = false;
             }
         }
+    }
+
+    // +--------------------+
+    // | TFOD stuff to move |
+    // +--------------------+
+
+    /**
+     * Initialize the Tensor Flow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+
+        //Change the minimum confidence - default is .4
+        tfodParameters.minimumConfidence = 0.75;
+
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, robot.vuforia.vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+    }
+
+    public void stop(){
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+    }
+
+    private GOLD_POS parseGoldPos() {
+
+        GOLD_POS pos = null;
+
+        // getUpdatedRecognitions() will return null if no new information is available since
+        // the last time that call was made.
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if (updatedRecognitions != null) {
+            if (updatedRecognitions.size() == 3) {
+                int goldMineralX = -1;
+                int silverMineral1X = -1;
+                int silverMineral2X = -1;
+                for (Recognition recognition : updatedRecognitions) {
+                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                        goldMineralX = (int) recognition.getLeft();
+                    } else if (silverMineral1X == -1) {
+                        silverMineral1X = (int) recognition.getLeft();
+                    } else {
+                        silverMineral2X = (int) recognition.getLeft();
+                    }
+                }
+                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                        pos = GOLD_POS.LEFT;
+                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                        pos = GOLD_POS.RIGHT;
+                    } else {
+                        pos = GOLD_POS.CENTER;
+                    }
+                }
+            }
+        }
+
+        return pos;
+
     }
 
 }

@@ -88,7 +88,7 @@ public class VuforiaFTC {
     private boolean capture = false;
     private final Telemetry telemetry;
     private final VuforiaLocalizer.Parameters parameters;
-    private VuforiaLocalizer vuforia = null;
+    public VuforiaLocalizer vuforia = null;
     private int trackingTimeout = 100;
     private VuforiaTrackables targetsRaw;
     private final List<VuforiaTrackable> targets = new ArrayList<>();

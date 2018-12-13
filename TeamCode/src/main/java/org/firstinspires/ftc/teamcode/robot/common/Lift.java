@@ -20,7 +20,7 @@ public class Lift implements CommonTask {
     private final static float EJECT_DELAY = 0.75f;
     private final static int REVERSE_MM = 250;
 
-    private final static int liftEncoderLowered = 11222; // TODO: get a real value
+    private final static int liftEncoderLowered = 11222;
 
     // Runtime
     private final Robot robot;
