@@ -25,7 +25,7 @@ import java.util.List;
 // | TODO: clear up Sampling and put the tfod stuff in it |
 // +------------------------------------------------------+
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "DO DA THINGS", group = "Test")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Claim (or not)", group = "Test")
 public class RuckusAutoTheBetterOne extends OpMode {
 
     // Auto constants
@@ -102,6 +102,8 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
         // Update
         telemetry.update();
+
+        dismountNeeded = true;
     }
 
     @Override
@@ -240,7 +242,7 @@ public class RuckusAutoTheBetterOne extends OpMode {
     }
 
     enum GOLD_POS {
-        CENTER (0, 380, 330, 15),
+        CENTER (0, 380, 330, 30),
         LEFT (-45, 530, 280, 55),
         RIGHT (45, 530, 280, -20);
 

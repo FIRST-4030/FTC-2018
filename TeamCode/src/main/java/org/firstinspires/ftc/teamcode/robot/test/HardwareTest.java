@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.wheels.MOTOR_END;
 import org.firstinspires.ftc.teamcode.wheels.MOTOR_SIDE;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Hardware Test", group = "Test")
-//@Disabled
+@Disabled
 public class HardwareTest extends OpMode {
 
     private static final float SERVO_INCREMENT = 0.05f;
