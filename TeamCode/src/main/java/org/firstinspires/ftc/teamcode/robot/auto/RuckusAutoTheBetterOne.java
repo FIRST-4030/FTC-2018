@@ -333,28 +333,28 @@ public class RuckusAutoTheBetterOne extends OpMode {
         // the last time that call was made.
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
         if (updatedRecognitions != null) {
-            if (updatedRecognitions.size() == 3) {
-                int goldMineralX = -1;
-                int silverMineral1X = -1;
-                int silverMineral2X = -1;
-                for (Recognition recognition : updatedRecognitions) {
-                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                        goldMineralX = (int) recognition.getLeft();
-                    } else if (silverMineral1X == -1) {
-                        silverMineral1X = (int) recognition.getLeft();
-                    } else {
-                        silverMineral2X = (int) recognition.getLeft();
-                    }
+            int sum = 0;
+            int num = 0;
+
+            for(Recognition recognition : updatedRecognitions){
+                if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)){
+                    num++;
+                    sum += recognition.getLeft();
                 }
-                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                        pos = GOLD_POS.LEFT;
-                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                        pos = GOLD_POS.RIGHT;
-                    } else {
-                        pos = GOLD_POS.CENTER;
-                    }
-                }
+
+            }
+
+            int average = 300;
+            if(num != 0){
+                average = sum/num;
+            }
+
+            if(average < 200) {
+                pos = GOLD_POS.LEFT;
+            } else if (average < 550) {
+                pos = GOLD_POS.CENTER;
+            } else {
+                pos = GOLD_POS.RIGHT;
             }
         }
 
