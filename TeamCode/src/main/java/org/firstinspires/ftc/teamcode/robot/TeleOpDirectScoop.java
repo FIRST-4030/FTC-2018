@@ -55,6 +55,9 @@ public class TeleOpDirectScoop extends OpMode {
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
 
+        // Stop PID motors
+        robot.scoop.stop();
+
         // Register buttons
         buttons = new ButtonHandler(robot);
         buttons.register("INTAKE-IN", gamepad2, PAD_BUTTON.dpad_down);

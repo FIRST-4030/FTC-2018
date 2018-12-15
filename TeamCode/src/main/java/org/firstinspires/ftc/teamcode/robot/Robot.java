@@ -80,7 +80,6 @@ public class Robot {
 
         scoop = pids.init(MOTORS.SCOOP);
         scoop.init();
-        scoop.stop();
 
         flagDropper = servos.init(SERVOS.FLAG_DROPPER);
         wheelCollector = servos.init(SERVOS.WHEEL_COLLECTOR);

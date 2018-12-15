@@ -29,11 +29,12 @@ public class TeleOpMode extends OpMode {
     private final static int LIFT_MIN = 0;
     private final static int SCOOP_UP = 50;
     private final static int SCOOP_DOWN = 1150;
+    private final static int SCOOP_MIN = 0;
+    private final static int SCOOP_MAX = SCOOP_DOWN + 100;
+
 
     // Potentially Unused
-    private final static int SCOOP_MIN = 0;
     private final static int SCOOP_EXTEND = 1200;
-    private final static int SCOOP_MAX = SCOOP_EXTEND + 300;
     private final static int SCOOP_INCREMENT = 10;
     private final static int INTAKE_FINE_MOTOR_CONTROL = 300;
     private final static float SERVO_TIME_SCALAR = .004375f;
@@ -190,12 +191,21 @@ public class TeleOpMode extends OpMode {
             }
         }*/
 
+        // Stick controls
         scoopTarget = (int) (robot.scoop.pid.target + (-gamepad2.right_stick_y * SCOOP_SPEED));
-        robot.scoop.set(scoopTarget);
+
+        // Set positions
         if (buttons.get("SCOOP_UP"))
-            robot.scoop.set(SCOOP_UP);
+            scoopTarget = SCOOP_UP;
         if (buttons.get("SCOOP_DOWN"))
-            robot.scoop.set(SCOOP_DOWN);
+            scoopTarget = SCOOP_DOWN;
+
+        // Limits
+        if (scoopTarget < SCOOP_MIN) scoopTarget = SCOOP_MIN;
+        if (scoopTarget > SCOOP_MAX) scoopTarget = SCOOP_MAX;
+
+        if (robot.scoop.getEncoder() != scoopTarget)
+            robot.scoop.set(scoopTarget);
 
         // +----------------------+
         // | Continuous Collector |
