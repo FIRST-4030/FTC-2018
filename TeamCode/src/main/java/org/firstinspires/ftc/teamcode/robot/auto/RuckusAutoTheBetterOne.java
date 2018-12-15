@@ -46,18 +46,8 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
     // Init-time config
     private ButtonHandler buttons;
-    private Field.AllianceColor alliance = Field.AllianceColor.RED;
-    private boolean wallLeft = true;
     private boolean claim = true;
-    private boolean returnLeft = true;
-    private boolean startCrater = true;
     private boolean dismountNeeded = true;
-
-    private int[] aproachPos;
-    private float centerSampleAngle;
-    private int[] depotPos;
-    private int[] parkSamePos; //pos for parking in the same color crater
-    private int[] parkDifferentPos;
 
     // Patchwork in the tfod stuff
     private TFObjectDetector tfod;
@@ -84,18 +74,9 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
         // Register buttons
         buttons = new ButtonHandler(robot);
-        buttons.register("WALL-RIGHT", gamepad1, PAD_BUTTON.dpad_right);
-        buttons.register("WALL-LEFT", gamepad1, PAD_BUTTON.dpad_left);
-        buttons.register("START-CRATER", gamepad1, PAD_BUTTON.y);
-        buttons.register("START-DEPOT", gamepad1, PAD_BUTTON.a);
-        buttons.register("ALLIANCE-RED", gamepad1, PAD_BUTTON.b);
-        buttons.register("ALLIANCE-BLUE", gamepad1, PAD_BUTTON.x);
 
         buttons.register("CLAIM-YES", gamepad1, PAD_BUTTON.dpad_up);
         buttons.register("CLAIM-NO", gamepad1, PAD_BUTTON.dpad_down);
-
-        buttons.register("RETURN-LEFT", gamepad1, PAD_BUTTON.left_bumper);
-        buttons.register("RETURN-RIGHT", gamepad1, PAD_BUTTON.right_bumper);
 
         buttons.register("DISMOUNT-YES", gamepad1, PAD_BUTTON.right_trigger);
         buttons.register("DISMOUNT-NO", gamepad1, PAD_BUTTON.left_trigger);
@@ -108,12 +89,7 @@ public class RuckusAutoTheBetterOne extends OpMode {
         userSettings();
 
         // Driver setup
-        telemetry.addData("Alliance", alliance);
-        telemetry.addData("Start", (startCrater) ? "Crater" : "Depot");
-        telemetry.addData("Dismount Needed", (dismountNeeded) ? "Yes" : "No");
         telemetry.addData("Claiming", claim);
-        if(claim) telemetry.addData("Return Direction", returnLeft ? "Left" : "Right");
-        if(!(claim && startCrater)) telemetry.addData("Drive to Wall Direction", wallLeft ? "Left" : "Right");
 
         // Overall ready status
         gameReady = (robot.gyro.isReady());
@@ -144,38 +120,6 @@ public class RuckusAutoTheBetterOne extends OpMode {
         robot.vuforia.enableCapture();
 
         tfod.activate();
-
-        if(alliance == Field.AllianceColor.BLUE && !startCrater) robot.gyro.setOffset(45 - 90);
-        if(alliance == Field.AllianceColor.BLUE && startCrater) robot.gyro.setOffset(45);
-        if(alliance == Field.AllianceColor.RED && !startCrater) robot.gyro.setOffset(-45 - 180);
-        if(alliance == Field.AllianceColor.RED && startCrater) robot.gyro.setOffset(-45 - 90);
-
-        aproachPos = new int[]{534, 534}; // something
-        centerSampleAngle = 45;
-        depotPos = new int[]{0, 0};
-        parkSamePos = new int[]{-457, 1626};
-        parkDifferentPos = new int[]{1626, -457};
-
-        if(startCrater) {
-            int temp = aproachPos[1];
-            aproachPos[1] = aproachPos[0];
-            aproachPos[0] = -temp;
-            centerSampleAngle += 90;
-        }
-
-        if(alliance == Field.AllianceColor.RED) {
-            aproachPos[0] *= -1;
-            aproachPos[1] *= -1;
-            centerSampleAngle += 180;
-            depotPos[0] *= -1;
-            depotPos[1] *= -1;
-            parkSamePos[0] *= -1;
-            parkSamePos[1] *= -1;
-            parkDifferentPos[0] *= -1;
-            parkDifferentPos[1] *= -1;
-        }
-
-        dismountNeeded = true;
 
     }
 
@@ -211,11 +155,7 @@ public class RuckusAutoTheBetterOne extends OpMode {
                 state = state.next();
                 break;
             case LOWER_LIFT:
-                if(dismountNeeded){
-                    driver = delegateDriver(common.lift.lowerLift(driver));
-                } else {
-                    state = state.next();
-                }
+                driver = delegateDriver(common.lift.lowerLift(driver));
                 break;
             case PARSE_SAMPLE:
                 GOLD_POS pos = parseGoldPos();
@@ -231,11 +171,30 @@ public class RuckusAutoTheBetterOne extends OpMode {
                 state = state.next();
                 break;
             case TURN_TO_SAMPLE:
-                driver.drive = common.drive.heading(centerSampleAngle);
+                driver.drive = common.drive.heading(90);
                 state = state.next();
                 break;
             case DRIVE_THROUGH:
-                driver.drive = common.drive.distance(600);
+                int mm = 600;
+                if(claim) mm += gold.claimingOffset;
+                driver.drive = common.drive.distance(mm);
+                state = state.next();
+                break;
+            case CLAIM_SKIP:
+                if(claim) state = state.next();
+                else state = AUTO_STATE.DONE;
+                break;
+            case TURN_TO_CLAIM:
+                driver.drive = common.drive.degrees(gold.claimingAngle);
+                state = state.next();
+                break;
+            case CLAIM:
+                robot.flagDropper.max();
+                driver.interval = .5f;
+                state = state.next();
+                break;
+            case UNCLAIM:
+                robot.flagDropper.min();
                 state = state.next();
                 break;
             case DONE:
@@ -259,7 +218,15 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
         TURN_TO_SAMPLE,     //Turn to face the mineral (hopefully gold)
 
-        DRIVE_THROUGH,      //Drive to clear the gold
+        DRIVE_THROUGH,      //Drive to clear the gold (further if claiming
+
+        CLAIM_SKIP,         //Skip to the end of the program if we aren't claiming
+
+        TURN_TO_CLAIM,      //Turn so that we dump into the crater
+
+        CLAIM,              //Move the flag dropper servo to drop the flag (and wait .5 sec)
+
+        UNCLAIM,            //Move servo back to min
 
         DONE;               // Finish
 
@@ -273,16 +240,20 @@ public class RuckusAutoTheBetterOne extends OpMode {
     }
 
     enum GOLD_POS {
-        CENTER (0, 380),
-        LEFT (-45, 530),
-        RIGHT (45, 530);
+        CENTER (0, 380, 330, 15),
+        LEFT (-45, 530, 280, 55),
+        RIGHT (45, 530, 280, -20);
 
         public int angleOffset;
         public int dist;
+        public int claimingOffset;
+        public int claimingAngle;
 
-        GOLD_POS(int angleOffset, int dist) {
+        GOLD_POS(int angleOffset, int dist, int claimingOffset, int claimingAngle) {
             this.angleOffset = angleOffset;
             this.dist = dist;
+            this.claimingOffset = claimingOffset;
+            this.claimingAngle = claimingAngle;
         }
 
         public String toString(){
@@ -319,44 +290,11 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
     private void userSettings(){
         buttons.update();
-        if (buttons.get("ALLIANCE-RED")) {
-            alliance = Field.AllianceColor.RED;
-        } else if (buttons.get("ALLIANCE-BLUE")) {
-            alliance = Field.AllianceColor.BLUE;
-        }
-
-        if (buttons.get("START-CRATER")) {
-            startCrater = true;
-            if(claim){
-                wallLeft = true;
-            }
-        } else if (buttons.get("START-DEPOT")) {
-            startCrater = false;
-        }
 
         if (buttons.get("CLAIM-YES")) {
             claim = true;
-            if(startCrater){
-                wallLeft = true;
-            }
         } else if (buttons.get("CLAIM-NO")) {
             claim = false;
-        }
-
-        if(!(startCrater && claim)) {
-            if (buttons.get("WALL-LEFT")) {
-                wallLeft = true;
-            } else if (buttons.get("WALL-RIGHT")) {
-                wallLeft = false;
-            }
-        }
-
-        if(claim) {
-            if (buttons.get("RETURN-LEFT")) {
-                returnLeft = true;
-            } else if (buttons.get("RETURN-RIGHT")) {
-                returnLeft = false;
-            }
         }
     }
 

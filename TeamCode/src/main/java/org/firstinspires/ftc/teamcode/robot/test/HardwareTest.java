@@ -125,6 +125,6 @@ public class HardwareTest extends OpMode {
             pos += SERVO_INCREMENT;
         }
         servo.setPositionRaw(pos);
-        telemetry.addData(name + " (S)", robot.intakeTurn.getPosition());
+        telemetry.addData(name + " (S)", servo.getPosition());
     }
 }
