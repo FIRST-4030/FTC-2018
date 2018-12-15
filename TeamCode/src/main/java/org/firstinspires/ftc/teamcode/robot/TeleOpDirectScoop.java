@@ -61,7 +61,7 @@ public class TeleOpDirectScoop extends OpMode {
         buttons.register("INTAKE-OUT", gamepad2, PAD_BUTTON.dpad_up);
         buttons.register("SLOW-MODE", gamepad1, PAD_BUTTON.a, BUTTON_TYPE.TOGGLE);
         buttons.register("REVERSE-COLLECTOR", gamepad2, PAD_BUTTON.b);
-        buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y);
+        buttons.register("STOP-COLLECTOR", gamepad2, PAD_BUTTON.y, BUTTON_TYPE.TOGGLE);
         buttons.register("SCOOP_RETURN", gamepad2, PAD_BUTTON.left_stick_button);
         buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
         buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_right);
