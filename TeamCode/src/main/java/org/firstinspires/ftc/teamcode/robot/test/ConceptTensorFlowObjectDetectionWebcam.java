@@ -143,13 +143,26 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                       for(Recognition recognition : updatedRecognitions){
                           if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)){
                               num++;
-                              sum += recognition.getTop();
+                              sum += recognition.getLeft();
                           }
 
                       }
 
-                      telemetry.addData("num of gold", sum);
-                      telemetry.addData("average x", (sum/num));
+                      telemetry.addData("num of gold", num);
+                      if(num != 0) telemetry.addData("average x", (sum/num));
+
+                      int average = 300;
+                      if(num != 0){
+                          average = sum/num;
+                      }
+
+                      if(average < 200) {
+                          telemetry.addData("Informed", "Left");
+                      } else if (average < 550) {
+                          telemetry.addData("Informed", "Center");
+                      } else {
+                          telemetry.addData("Informed", "Right");
+                      }
 
                       telemetry.update();
                     }
