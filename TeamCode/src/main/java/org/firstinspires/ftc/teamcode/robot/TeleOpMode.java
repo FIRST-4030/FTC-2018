@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.buttons.BUTTON_TYPE;
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.buttons.PAD_BUTTON;
 import org.firstinspires.ftc.teamcode.buttons.ButtonHandler;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
+@Disabled
 public class TeleOpMode extends OpMode {
 
     // Configuration
@@ -56,6 +58,9 @@ public class TeleOpMode extends OpMode {
 
         // Init the common tasks elements
         robot = new Robot(hardwareMap, telemetry);
+
+        // Init the scoop again
+        robot.scoop.init();
 
         // Register buttons
         buttons = new ButtonHandler(robot);

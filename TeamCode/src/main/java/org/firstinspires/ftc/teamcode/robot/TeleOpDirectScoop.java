@@ -66,6 +66,7 @@ public class TeleOpDirectScoop extends OpMode {
         buttons.register("SCOOP_EXTEND", gamepad2, PAD_BUTTON.right_stick_button);
         buttons.register("SCOOP_DOWN", gamepad2, PAD_BUTTON.dpad_right);
         buttons.register("SCOOP_UP", gamepad2, PAD_BUTTON.dpad_left);
+        buttons.register("DROP_FLAG", gamepad1, PAD_BUTTON.b, BUTTON_TYPE.TOGGLE);
 
         // Wait for the game to begin
         telemetry.addData(">", "Ready for game start");
@@ -179,6 +180,13 @@ public class TeleOpDirectScoop extends OpMode {
             robot.wheelCollector.setPosition(1 - WHEELY_SPEED);
         } else {
             robot.wheelCollector.setPosition(WHEELY_SPEED);
+        }
+
+        // emergency flag drop
+        if (buttons.get("DROP_FLAG")) {
+            robot.flagDropper.max();
+        } else {
+            robot.flagDropper.min();
         }
 
     }
