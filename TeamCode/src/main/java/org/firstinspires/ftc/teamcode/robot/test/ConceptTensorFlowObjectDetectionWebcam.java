@@ -136,6 +136,21 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                           }
                         }
                       }
+
+                      int sum = 0;
+                      int num = 0;
+
+                      for(Recognition recognition : updatedRecognitions){
+                          if(recognition.getLabel().equals(LABEL_GOLD_MINERAL)){
+                              num++;
+                              sum += recognition.getTop();
+                          }
+
+                      }
+
+                      telemetry.addData("num of gold", sum);
+                      telemetry.addData("average x", (sum/num));
+
                       telemetry.update();
                     }
                 }
@@ -174,7 +189,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
 
         //Change the minimum confidence - default is .4
-        tfodParameters.minimumConfidence = 0.75;
+        tfodParameters.minimumConfidence = 0.65;
 
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
