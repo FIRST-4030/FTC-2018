@@ -190,6 +190,10 @@ public class RuckusAutoTheBetterOne extends OpMode {
                 driver.drive = common.drive.degrees(gold.claimingAngle);
                 state = state.next();
                 break;
+            case DRIVE_TO_CLAIM:
+                driver.drive = common.drive.distance(gold.driveClaimDist);
+                state = state.next();
+                break;
             case CLAIM:
                 robot.flagDropper.max();
                 driver.interval = .5f;
@@ -226,6 +230,8 @@ public class RuckusAutoTheBetterOne extends OpMode {
 
         TURN_TO_CLAIM,      //Turn so that we dump into the crater
 
+        DRIVE_TO_CLAIM,     //Drive a little to make sure we dump into the depot
+
         CLAIM,              //Move the flag dropper servo to drop the flag (and wait .5 sec)
 
         UNCLAIM,            //Move servo back to min
@@ -242,20 +248,22 @@ public class RuckusAutoTheBetterOne extends OpMode {
     }
 
     enum GOLD_POS {
-        CENTER (0, 380, 330, 30),
-        LEFT (-45, 530, 280, 55),
-        RIGHT (45, 530, 280, -20);
+        CENTER (0, 380, 380, 30, 0),
+        LEFT (-45, 530, 280, 55, 100),
+        RIGHT (45, 530, 280, -20, 50);
 
         public int angleOffset;
         public int dist;
         public int claimingOffset;
         public int claimingAngle;
+        public int driveClaimDist;
 
-        GOLD_POS(int angleOffset, int dist, int claimingOffset, int claimingAngle) {
+        GOLD_POS(int angleOffset, int dist, int claimingOffset, int claimingAngle, int driveClaimDist) {
             this.angleOffset = angleOffset;
             this.dist = dist;
             this.claimingOffset = claimingOffset;
             this.claimingAngle = claimingAngle;
+            this.driveClaimDist = driveClaimDist;
         }
 
         public String toString(){
