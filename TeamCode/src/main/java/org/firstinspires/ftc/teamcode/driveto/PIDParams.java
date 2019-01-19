@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.driveto;
 
+import java.security.InvalidParameterException;
+
 public class PIDParams {
     public float P;
     public float I;
     public float D;
+
+    public int min = 0;
+    public int max = 0;
 
     // If set, limit the accumulator value to the range ±maxAccumulator
     public Float maxAccumulator;
@@ -19,21 +24,32 @@ public class PIDParams {
     }
 
     public PIDParams(float p, float i, float d) {
-        this(p, i, d,
+        this(p, i, d, 0, 0);
+    }
+
+    public PIDParams(float p, float i, float d, int min, int max) {
+        this(p, i, d, min, max,
                 null,
                 false,
                 true);
     }
 
-    public PIDParams(float p, float i, float d,
+    public PIDParams(float p, float i, float d, int min, int max,
                      Float maxAccumulator,
                      boolean resetAccumulatorOnErrorSignChange,
                      boolean resetAccumulatorOnTargetSignChange) {
         this.P = p;
         this.I = i;
         this.D = d;
+        this.min = min;
+        this.max = max;
         this.maxAccumulator = maxAccumulator;
         this.resetAccumulatorOnErrorSignChange = resetAccumulatorOnErrorSignChange;
         this.resetAccumulatorOnTargetSignChange = resetAccumulatorOnTargetSignChange;
+
+        if (min >= max) {
+            throw new InvalidParameterException(this.getClass().getSimpleName() + ": Invalid min/max");
+        }
+
     }
 }

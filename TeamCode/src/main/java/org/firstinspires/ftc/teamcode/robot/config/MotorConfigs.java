@@ -34,6 +34,9 @@ public class MotorConfigs extends Configs {
 
             case PRODUCTION: case CODE:
                 switch (motor) {
+                    case SCOOP:
+                        config = new MotorConfig("Scoop", true, true);
+                        break;
                     case LIFT:
                         config = new MotorConfig("Lift", false);
                         break;
@@ -42,9 +45,6 @@ public class MotorConfigs extends Configs {
                         break;
                     case INTAKE:
                         config = new MotorConfig("Intake", true);
-                        break;
-                    case SCOOP:
-                        config = new MotorConfig("Scoop", true, true);
                         break;
                 }
                 break;

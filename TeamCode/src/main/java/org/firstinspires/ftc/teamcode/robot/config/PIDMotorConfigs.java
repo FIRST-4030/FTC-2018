@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.config.Configs;
 import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 import org.firstinspires.ftc.teamcode.robot.MOTORS;
 
-public class PIDMotorConfigs extends Configs {
+public class PIDMotorConfigs extends MotorConfigs {
     public PIDMotorConfigs(HardwareMap map, Telemetry telemetry, BOT bot) {
         super(map, telemetry, bot);
 
@@ -30,6 +30,7 @@ public class PIDMotorConfigs extends Configs {
         checkNull(motor, MOTORS.class.getName());
 
         PIDMotorConfig config = null;
+        MotorConfig m = super.config(motor);
         switch (bot) {
 
             // IMPORTANT: If you need to change the *names* of the motors here, change them in MotorConfigs too
@@ -37,20 +38,16 @@ public class PIDMotorConfigs extends Configs {
             case PRODUCTION: case CODE:
                 switch (motor) {
                     case SCOOP:
-                        MotorConfig m = new MotorConfig("Scoop", true, true);
                         config = new PIDMotorConfig(m, new PIDParams(0.003f, 0.0001f, 0f), -8000, 8000);
                         break;
                     case LIFT:
-                        MotorConfig m2 = new MotorConfig("Lift", false);
-                        config = new PIDMotorConfig(m2, new PIDParams(.003f, 0.00001f, 0f), -8000, 8000);
+                        config = new PIDMotorConfig(m, new PIDParams(.003f, 0.00001f, 0f), -8000, 8000);
                         break;
                     case ARM:
-                        MotorConfig m3 = new MotorConfig("Arm", true);
-                        config = new PIDMotorConfig(m3, new PIDParams(.003f, 0.00001f, 0f), 0, 8000);
+                        config = new PIDMotorConfig(m, new PIDParams(.003f, 0.00001f, 0f), 0, 8000);
                         break;
                     case INTAKE:
-                        MotorConfig m4 = new MotorConfig("Intake", true);
-                        config = new PIDMotorConfig(m4, new PIDParams(.003f, 0.00001f, 0f), -8000, 8000);
+                        config = new PIDMotorConfig(m, new PIDParams(.003f, 0.00001f, 0f), -8000, 8000);
                         break;
                 }
                 break;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.actuators;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.config.Config;
+import org.firstinspires.ftc.teamcode.driveto.PIDParams;
 
 import java.security.InvalidParameterException;
 
@@ -11,6 +12,8 @@ public class MotorConfig implements Config {
     public final boolean reverse;
     public final boolean brake;
     public final DcMotor.RunMode mode;
+
+    public PIDParams pid = null;
 
     public MotorConfig(MotorConfig config) {
         if (config == null) {
@@ -21,6 +24,11 @@ public class MotorConfig implements Config {
         this.reverse = config.reverse;
         this.brake = config.brake;
         this.mode = config.mode;
+    }
+
+    public MotorConfig(MotorConfig config, PIDParams pid) {
+        this(config);
+        this.pid = pid;
     }
 
     public MotorConfig(String name, boolean reverse, boolean brake, DcMotor.RunMode mode) {
